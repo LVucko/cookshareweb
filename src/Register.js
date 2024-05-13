@@ -8,8 +8,8 @@ const Register = () => {
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
-    const [file, setFile] = useState('');
     const [pathToPicture, setPathToPicture] = useState('/asdasdada');
+    const [file, setFile] = useState('');
     function handleChange(e) {
         console.log(e.target.files);
         setFile(URL.createObjectURL(e.target.files[0]));

@@ -7,15 +7,15 @@ const  Create = () => {
     const [shortDescription, setShortDescription] = useState('');
     const [longDescription, setLongDescription] = useState('');
     const [isProcesing, setIsPending] = useState(false);
-    const [selectedIds, setSelectedIds] = useState([]);
+    const [categories, setSelectedIds] = useState([]);
     const [file, setFile] = useState();
 
     const handleCheckboxChange = (event) => {
     const checkedId = event.target.value;
     if(event.target.checked){
-        setSelectedIds([selectedIds,checkedId])
+        setSelectedIds([...categories,checkedId])
     }else{
-        setSelectedIds(selectedIds.filter(id=>id !== checkedId))
+        setSelectedIds(categories.filter(id=>id !== checkedId))
     }
     }
     function handlePictureChange(e) {
@@ -25,14 +25,14 @@ const  Create = () => {
 
     const history = useHistory();
     const userId = 1; //dohvatiti iz cookie-a
-    const {data: categories, isPending, error} = useFetch('/api/categories');
-    const pathToPictures = 1;
+    const {data: allCategories, isPending, error} = useFetch('/api/categories');
+    const pathToPictures = ["asd"];
     const handleSubmit = (e) => {
         e.preventDefault();
         const recipe = {userId, title, shortDescription, longDescription, categories, pathToPictures};
         setIsPending(true);
         console.log(recipe);
-        fetch('/api/recipes', 
+        fetch('/api/recipes/new', 
         {
             method: 'POST',
             headers: {"Content-Type": "application/json"},
@@ -48,9 +48,9 @@ const  Create = () => {
     }
     return (
         <div className = "create">
-            <h2>Dodaj novi recipe</h2>
+            <h2>Dodaj novi recept</h2>
             <form onSubmit = {handleSubmit}>
-                <label>Naziv recipea:</label>
+                <label>Naziv recepta:</label>
                 <input 
                     type = "text" 
                     required 
@@ -71,12 +71,15 @@ const  Create = () => {
                     onChange = {(e) => setLongDescription(e.target.value)}
 
                 ></textarea>
+                <label>Kategorije (barem jedna):</label>
                 {error && <div>{error}</div>}
                 {isPending && <div>Učitavam...</div>}
-                {categories && categories.map((category) =>(
-                    <div className= "categories" key = {category.categoryName}>
-                        <input type="checkbox" id={category.categoryName} name={category.categoryName} value={category.categoryName} onChange={(event) => { handleCheckboxChange(event) }}></input>
-                        <label htmlFor={category.categoryName}>{category.categoryName}</label>
+                {allCategories && allCategories.map((category) =>(
+                    <div className= "categories" key = {category.name}>
+                        <label htmlFor={category.name}>
+                            <input type="checkbox" id={category.id} name={category.name} value={category.id} onChange={(event) => { handleCheckboxChange(event) }}></input>
+                            {category.name}
+                        </label>
                     </div>
                 ))}
                 <div className="Image">
@@ -84,8 +87,8 @@ const  Create = () => {
                     <input type="file" onChange={handlePictureChange} />
                     <img src={file} alt="Uploaded"/>
                 </div>
-                {!isProcesing && <button>Dodaj recipe</button>}
-                {isProcesing && <button>Dodajem recipe....</button>}
+                {!isProcesing && <button>Dodaj recept</button>}
+                {isProcesing && <button>Dodajem recept....</button>}
             </form>
         </div>
     );
