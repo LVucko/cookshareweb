@@ -19,11 +19,12 @@ const RecipeDetails = () => {
             { recipe &&
             <article>
                 <h2>{recipe.title}</h2>
-                <p>Autor: {recipe.username}</p>
+                <p>Autor: <a href = {"/users/" +recipe.userId}>{recipe.username}</a></p>
                 <div>{recipe.shortDescription}</div>
                 <div>{Date(recipe.creationDate.replace(' ', 'T')).toString()}</div>
                 <p>Kategorije: {recipe.categories.toString()}</p>
                 <div>{recipe.longDescription}</div>
+                <img src={"/../../" + recipe.pathToPictures[0]} alt="Recipe"></img>
                 <button onClick={() => handleClick(recipe.id)}>delete</button>
             </article>
 

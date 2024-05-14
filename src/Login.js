@@ -41,7 +41,8 @@ const Login = () => {
             ></input>
             <button>Prijava</button>
         </form>
-    </div> );
+    </div> 
+    );
 }
  
 export default Login;

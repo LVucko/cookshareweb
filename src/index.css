@@ -155,3 +155,6 @@
 .categories input[type=checkbox]{ 
   flex: none; 
 } 
+.recipe-details img{
+  width: 250px;
+}

@@ -8,7 +8,12 @@ const  Create = () => {
     const [longDescription, setLongDescription] = useState('');
     const [isProcesing, setIsPending] = useState(false);
     const [categories, setSelectedIds] = useState([]);
+    const [pathToPictures, setPathToPictures] = useState([]);
     const [file, setFile] = useState();
+
+    const history = useHistory();
+    const userId = 1; //dohvatiti iz cookie-a
+    const {data: allCategories, isPending, error} = useFetch('/api/categories');
 
     const handleCheckboxChange = (event) => {
     const checkedId = event.target.value;
@@ -17,16 +22,35 @@ const  Create = () => {
     }else{
         setSelectedIds(categories.filter(id=>id !== checkedId))
     }
+    
     }
+
     function handlePictureChange(e) {
         console.log(e.target.files);
         setFile(URL.createObjectURL(e.target.files[0]));
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+        fetch('api/upload', {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => {
+            if (response.ok) {
+              return response.text();
+            } else {
+              throw new Error('File upload failed');
+            }
+          })
+          .then(data => {
+            setPathToPictures([data]);
+            console.log('Server response:', data);
+          })
+          .catch(error => {
+            console.error('Error uploading file:', error);
+          });
     }
 
-    const history = useHistory();
-    const userId = 1; //dohvatiti iz cookie-a
-    const {data: allCategories, isPending, error} = useFetch('/api/categories');
-    const pathToPictures = ["asd"];
     const handleSubmit = (e) => {
         e.preventDefault();
         const recipe = {userId, title, shortDescription, longDescription, categories, pathToPictures};
@@ -42,10 +66,9 @@ const  Create = () => {
             console.log({recipe});
             setIsPending(false);
                         history.push('/');
-        }
-    )
-        
+        })
     }
+
     return (
         <div className = "create">
             <h2>Dodaj novi recept</h2>

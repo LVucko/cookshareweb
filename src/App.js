@@ -6,6 +6,7 @@ import RecipeDetails from './RecipeDetails';
 import NotFound from './NotFound';
 import Register from './Register';
 import Login from './Login'
+import UserDetails from './UserDetails'
 function App() {
   return (
     <Router>
@@ -27,6 +28,9 @@ function App() {
             </Route>
             <Route path="/recipes/:id">
               <RecipeDetails/>
+            </Route >
+            <Route path="/users/:id">
+              <UserDetails/>
             </Route >
             <Route path="*">
              <NotFound/>

@@ -13,6 +13,27 @@ const Register = () => {
     function handleChange(e) {
         console.log(e.target.files);
         setFile(URL.createObjectURL(e.target.files[0]));
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+        fetch('api/upload', {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => {
+            if (response.ok) {
+              return response.text();
+            } else {
+              throw new Error('File upload failed');
+            }
+          })
+          .then(data => {
+            setPathToPicture(data);
+            console.log('Server response:', data);
+          })
+          .catch(error => {
+            console.error('Error uploading file:', error);
+          });
     }
     const handleSubmit = (e) =>{
         e.preventDefault();
@@ -81,12 +102,6 @@ const Register = () => {
                     <input type="file" onChange={handleChange} />
                     <img src={file} alt="Uploaded"/>
             </div>
-            <label>PicturePath (opcionalno)</label>
-            <input
-                type = "text"
-                value = {pathToPicture}
-                onChange = {(e) => setPathToPicture(e.target.value)}
-            ></input>
             <button>Register</button>
         </form>
     </div> );
