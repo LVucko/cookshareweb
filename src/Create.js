@@ -12,7 +12,7 @@ const  Create = () => {
     const [file, setFile] = useState();
 
     const history = useHistory();
-    const userId = 1; //dohvatiti iz cookie-a
+    const userId = 3; //dohvatiti iz cookie-a
     const {data: allCategories, isPending, error} = useFetch('/api/categories');
 
     const handleCheckboxChange = (event) => {
