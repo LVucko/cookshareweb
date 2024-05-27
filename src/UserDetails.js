@@ -3,8 +3,8 @@ import useFetch from './useFetch';
 import RecipeList from './RecipeList';
 const UserDetails = () => {
     const {id} = useParams();
-    const{data: user, userError, isPendingUser} = useFetch('/api/users/' + id);
-    const{data: recipes, recipesError, isPendingRecipes} = useFetch('/api/recipes/userrecipes/' + id);
+    const{data: user, error: userError, ispending: isPendingUser} = useFetch('/api/users/' + id);
+    const{data: recipes, error:recipesError, ispending: isPendingRecipes} = useFetch('/api/recipes/user/' + id);
     return (  
         <div className= "recipe-details">
             {isPendingUser && <div>Loading...</div>}
@@ -12,15 +12,15 @@ const UserDetails = () => {
             {user &&
             <article>
                 <h2>{user.username}</h2>
-                <div>{Date(user.creationDate.replace(' ', 'T')).toString()}</div>
+                <div>Datum kreiranja računa: {(user.creationDate.substring(0, 10).replaceAll('-', ' '))}</div>
                 <img src={"/../../" + user.pathToPicture} alt="Profile"></img>
             </article>
             }
             <div className="home">
-            {recipesError && <div>{recipesError}</div>}
-            {isPendingRecipes && <div>Učitavam...</div>}
-            {recipes && <RecipeList recipes= {recipes} title = {"Svi recepti korisnika "+ user.username} ></RecipeList>}
-        </div>
+                {recipesError && <div>{recipesError}</div>}
+                {isPendingRecipes && <div>Učitavam...</div>}
+                {recipes && user && <RecipeList recipes= {recipes} title = {"Svi recepti korisnika "+ user.username} ></RecipeList>}
+            </div>
         </div>
     );
 }

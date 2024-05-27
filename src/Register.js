@@ -8,7 +8,7 @@ const Register = () => {
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
-    const [pathToPicture, setPathToPicture] = useState('/asdasdada');
+    const [pictureId, setPictureId] = useState('4');
     const [file, setFile] = useState('');
     function handleChange(e) {
         console.log(e.target.files);
@@ -28,7 +28,7 @@ const Register = () => {
             }
           })
           .then(data => {
-            setPathToPicture(data);
+            setPictureId(data);
             console.log('Server response:', data);
           })
           .catch(error => {
@@ -38,7 +38,7 @@ const Register = () => {
     const handleSubmit = (e) =>{
         e.preventDefault();
         
-        const user  = {username, email, password, realName, phone, pathToPicture};
+        const user  = {username, email, password, realName, phone, pictureId};
 
         fetch('/api/users/register',{
             method: 'POST',
@@ -98,7 +98,7 @@ const Register = () => {
                 onChange = {(e) => setRepeatPassword(e.target.value)}
             ></input>
             <div className="Image">
-                    <h2>Add Image:</h2>
+                    <h2>Profilna slika:</h2>
                     <input type="file" onChange={handleChange} />
                     <img src={file} alt="Uploaded"/>
             </div>

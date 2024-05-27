@@ -8,7 +8,7 @@ const  Create = () => {
     const [longDescription, setLongDescription] = useState('');
     const [isProcesing, setIsPending] = useState(false);
     const [categories, setSelectedIds] = useState([]);
-    const [pathToPictures, setPathToPictures] = useState([]);
+    const [pictureIds, setPictureIds] = useState([]);
     const [file, setFile] = useState();
 
     const history = useHistory();
@@ -43,7 +43,7 @@ const  Create = () => {
             }
           })
           .then(data => {
-            setPathToPictures([data]);
+            setPictureIds([data]);
             console.log('Server response:', data);
           })
           .catch(error => {
@@ -53,10 +53,10 @@ const  Create = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const recipe = {userId, title, shortDescription, longDescription, categories, pathToPictures};
+        const recipe = {userId, title, shortDescription, longDescription, categories, pictureIds};
         setIsPending(true);
         console.log(recipe);
-        fetch('/api/recipes/new', 
+        fetch('/api/recipes', 
         {
             method: 'POST',
             headers: {"Content-Type": "application/json"},
