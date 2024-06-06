@@ -117,11 +117,12 @@
 
 .register {
   max-width: 400px;
-  margin: 0 auto;
+  margin: auto;
   text-align: center;
 }
 .register label {
   text-align: left;
+  margin-top: 5px;
   display: block;
 }
 .register h2 {
@@ -129,21 +130,61 @@
   color: #f1356d;
   margin-bottom: 5px;
 }
-.register input, .register textarea, .register select, #inputfield {
+.register p{
+  margin-top: 0;
+  font-size: small;
+  color:red;
+  text-align: left;
+  margin-left: 2px
+}
+
+.register input{
   width: 100%;
   padding: 6px 10px;
-  margin: 10px 0;
+  margin-bottom: 2px;
+  border-radius: 8px;
   border: 1px solid #ddd;
   box-sizing: border-box;
   display: block;
 }
 .register button {
-  background: #f1356d;
+  background: hsl(342, 87%, 58%);
   color: #fff;
   border: 0;
   padding: 8px;
   border-radius: 8px;
   cursor: pointer;
+}
+.register button:hover{
+  background: hsl(342, 87%, 30%);
+}
+.register #disabledButton{
+  background: hsl(342, 87%, 30%);
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: not-allowed;
+}
+
+.register input[type=file] {
+  max-width: 100%;
+  padding: 1px;
+  border-radius: 8px;
+  background: #fff;
+}
+.register input[type=file]::file-selector-button {
+  margin-right: 20px;
+  border: none;
+  background: hsl(342, 87%, 58%);
+  padding: 8px;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+}
+
+input[type=file]::file-selector-button:hover {
+  background: hsl(342, 87%, 30%);
 }
 .categories{
   display: table-row;

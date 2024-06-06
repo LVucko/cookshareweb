@@ -65,7 +65,7 @@ const  Create = () => {
             console.log('Novi recipe dodan');
             console.log({recipe});
             setIsPending(false);
-                        history.push('/');
+            history.push('/');
         })
     }
 
