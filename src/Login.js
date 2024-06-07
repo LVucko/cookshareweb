@@ -29,7 +29,12 @@ const Login = () => {
             }
             }
         ).then(data => {
-            //logiraj usera
+            var token = data.token;
+            var date = new Date();
+            var expiresIn = data.expiresIn;
+            date.setTime(date.getTime() + expiresIn);
+            var expirationDate = date.toUTCString();
+            document.cookie = "token=" + token  + "; Expires=" + expirationDate +"; path=/";
             setIsProcessing(false);
             //redirect na nesta
             

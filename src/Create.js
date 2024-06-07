@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import useFetch from './useFetch';
+import axios from "axios";
 
 const  Create = () => {
     const [title, setTitle] = useState('');
@@ -12,7 +13,6 @@ const  Create = () => {
     const [file, setFile] = useState();
 
     const history = useHistory();
-    const userId = 3; //dohvatiti iz cookie-a
     const {data: allCategories, isPending, error} = useFetch('/api/categories');
 
     const handleCheckboxChange = (event) => {
@@ -53,7 +53,7 @@ const  Create = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const recipe = {userId, title, shortDescription, longDescription, categories, pictureIds};
+        const recipe = {title, shortDescription, longDescription, categories, pictureIds};
         setIsPending(true);
         console.log(recipe);
         fetch('/api/recipes', 

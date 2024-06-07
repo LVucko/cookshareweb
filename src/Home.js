@@ -1,12 +1,19 @@
 import RecipeList from './RecipeList';
-import useFetch from './useFetch';
+import { useEffect } from 'react';
+import { useState } from 'react';
+import axios from 'axios';
 const Home = () => {
-    const {data: recipes, isPending, error} = useFetch('/api/recipes/latest/10');
+    const [latestRecipes, setLatestRecipes] = useState(null);
+    useEffect(() => {
+        axios.get('/api/recipes/latest/10').then((response) => {
+        setLatestRecipes(response.data);
+        });
+    }, []);
+
     return (  
         <div className="home">
-            {error && <div>{error}</div>}
-            {isPending && <div>Učitavam...</div>}
-            {recipes && <RecipeList recipes= {recipes} title = "Svi recepti" ></RecipeList>}
+            {!latestRecipes && <div>Učitavam recepte...</div>}
+            {latestRecipes && <RecipeList recipes= {latestRecipes} title = "Najnoviji recepti: " ></RecipeList>}
         </div>
     );
 }

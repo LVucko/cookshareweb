@@ -1,14 +1,26 @@
 import { useParams } from "react-router-dom/cjs/react-router-dom";
-import useFetch from './useFetch';
 import RecipeList from './RecipeList';
+import { useState } from "react";
+import { useEffect } from "react";
+import axios from "axios";
 const UserDetails = () => {
     const {id} = useParams();
-    const{data: user, error: userError, ispending: isPendingUser} = useFetch('/api/users/' + id);
-    const{data: recipes, error:recipesError, ispending: isPendingRecipes} = useFetch('/api/recipes/user/' + id);
+    const [user, setUser] = useState(null);
+    const [recipes, setRecipes] = useState(null);
+    useEffect(() => {
+        axios.get('/api/users/' + id).then((response) => {
+        setUser(response.data);
+        });
+    }, [id]);
+    useEffect(() => {
+        axios.get('/api/recipes/user/' + id).then((response) => {
+        setRecipes(response.data);
+        });
+    }, [id]);
+
     return (  
         <div className= "recipe-details">
-            {isPendingUser && <div>Loading...</div>}
-            {userError && <div>{userError}</div>}
+            {!user && <div>Loading...</div>}
             {user &&
             <article>
                 <h2>{user.username}</h2>
@@ -16,9 +28,8 @@ const UserDetails = () => {
                 <img src={"/../../" + user.pathToPicture} alt="Profile"></img>
             </article>
             }
-            <div className="home">
-                {recipesError && <div>{recipesError}</div>}
-                {isPendingRecipes && <div>Učitavam...</div>}
+            <div>
+                {!recipes && <div>Učitavam...</div>}
                 {recipes && user && <RecipeList recipes= {recipes} title = {"Svi recepti korisnika "+ user.username} ></RecipeList>}
             </div>
         </div>
