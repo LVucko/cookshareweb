@@ -7,38 +7,60 @@ import NotFound from './NotFound';
 import Register from './Register';
 import Login from './Login'
 import UserDetails from './UserDetails'
+import UserContext from "./UserContext"
+import { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
+import { decodeToken} from "react-jwt";
 function App() {
+  const [userInfo, setUserInfo] = useState(null);
+  const login = (userData) => {
+    setUserInfo(userData);
+  };
+  const logout = () => {
+    Cookies.remove('JWT');
+    setUserInfo(null);
+  };
+  useEffect(() => {
+    if(Cookies.get('JWT')){
+      login(decodeToken(Cookies.get('JWT')).UserId);
+      console.log(decodeToken(Cookies.get('JWT')).UserId);
+    }
+    },[]);
+
   return (
-    <Router>
-      <div className="App">
-        <Navbar/>
-        <div className = "content">
-          <Switch>
-            <Route exact path="/">
-              <Home/>
-            </Route>
-            <Route exact path="/register">
-              <Register/>
-            </Route>
-            <Route exact path="/login">
-              <Login/>
-            </Route>
-            <Route exact path="/create">
-              <Create/>
-            </Route>
-            <Route path="/recipes/:id">
-              <RecipeDetails/>
-            </Route >
-            <Route path="/users/:id">
-              <UserDetails/>
-            </Route >
-            <Route path="*">
-             <NotFound/>
-            </Route>
-          </Switch>
+    <UserContext.Provider value={{ userInfo, login, logout }}>
+      <Router>
+        <div className="App">
+          <Navbar/>
+          <div className = "content">
+            <Switch>
+              <Route exact path="/">
+                <Home/>
+              </Route>
+              <Route exact path="/register">
+                <Register/>
+              </Route>
+              <Route exact path="/login">
+                <Login/>
+              </Route>
+              <Route exact path="/create">
+                <Create/>
+              </Route>
+              <Route path="/recipes/:id">
+                <RecipeDetails/>
+              </Route >
+              <Route path="/users/:id">
+                <UserDetails/>
+              </Route >
+              <Route path="*">
+              <NotFound/>
+              </Route>
+            </Switch>
+          </div>
         </div>
-      </div>
-    </Router>
+      </Router>
+    </UserContext.Provider>
+    
   );
 }
 

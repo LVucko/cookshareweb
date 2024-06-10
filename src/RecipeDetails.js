@@ -7,10 +7,10 @@ const RecipeDetails = () => {
     const [isPending, setIsPending] = useState(false);
     const [selectedRating, setSelectedRating] = useState("5"); 
     const {id} = useParams();
-    const userId = 2 //dohvatit iz cookiea
     const{ data: recipe , error: errorRecipe, isPending: isPendingRecipe} = useFetch('/api/recipes/' + id);
     const{ data: comments , error: errorComments, isPending: isPendingComments} = useFetch('/api/recipes/' + id +"/comments");
-    const{ data: userRating, error: errorUserRating, isPending: isPendingUserRating} = useFetch('/api/recipes/' + id + '/rating/user/' + userId);
+    
+    const{ data: userRating, error: errorUserRating, isPending: isPendingUserRating} = useFetch('/api/recipes/' + id + '/rating');
     const history = useHistory();
     const handleClick= () => {
         fetch('/api/recipes/'+ recipe.id, {
@@ -20,7 +20,7 @@ const RecipeDetails = () => {
         })
     }
     const handleRating = () => {
-        const rating = {userId: userId, recipeId: recipe.id, rating: selectedRating};
+        const rating = {recipeId: recipe.id, rating: selectedRating};
         setIsPending(true);
         fetch("/api/recipes/" + id + "/rating", {
             method: 'POST',
@@ -35,7 +35,7 @@ const RecipeDetails = () => {
     }
     const handleSubmit = (e) => {
         e.preventDefault();
-        const comment = {userId: userId, recipeId: recipe.id, comment: newComment};
+        const comment = {recipeId: recipe.id, comment: newComment};
         setIsPending(true);
         console.log(recipe);
         fetch("/api/recipes/" + id +"/comments", 

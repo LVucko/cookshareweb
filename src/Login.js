@@ -1,47 +1,45 @@
 import { useState } from "react";
+import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import { Link } from "react-router-dom/cjs/react-router-dom";
+import axios from "axios";
+import Cookies from 'js-cookie';
+import { useContext } from "react";
+import UserContext from "./UserContext"
+import { decodeToken, useJwt } from "react-jwt";
 const Login = () => {
+    const history = useHistory();
     const [isProcesing, setIsProcessing] = useState(false);
     const [loginError, setLoginError] = useState('');
     const [user, setUser] = useState({
         userLogin: '',
         password: ''
     })
-    const handleSubmit = (e) =>{
+    const{login} = useContext(UserContext);
+    const handleLogin = (e) =>{
         e.preventDefault();
         setIsProcessing(true);
         setLoginError('');
-    fetch('/api/users/login', {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(user)
-      })
-        .then(response => {
-            if (response.ok) {
-            return response.json();
-            } else {
-                if(response.status === 404){
-                    setIsProcessing(false);
-                    setLoginError("Pogrešno korisničko ime ili lozinka!");
-                    throw new Error("User not found");
-                }
-                
-            }
-            }
-        ).then(data => {
-            var token = data.token;
-            var date = new Date();
-            var expiresIn = data.expiresIn;
+        axios.post('/api/users/login', user)
+        .then((response) => {
+            const token  = response.data.token;
+            const expiresIn = response.data.expiresIn;
+            const date = new Date();
             date.setTime(date.getTime() + expiresIn);
-            var expirationDate = date.toUTCString();
-            document.cookie = "token=" + token  + "; Expires=" + expirationDate +"; path=/";
+            Cookies.set('JWT', token, {expires : date})
+            login(decodeToken(token).UserId);
             setIsProcessing(false);
-            //redirect na nesta
-            
-          })
-          .catch(error => {
-            console.error('There was a problem with the Fetch operation:', error);
-          });
+            history.push('/');
+        }).catch((error) => {
+            if(error.response.status === 404){
+                setLoginError("Ne postoji korisnik s tim imenom");
+            }
+            if(error.response.status === 401){
+                setLoginError("Pogrešna zaporka");
+            }
+            setIsProcessing(false);
+            console.log(error);
+        });
+
     }
     return ( 
     <div className = "register">
@@ -49,7 +47,7 @@ const Login = () => {
         <h4>Ne posjedujete račun?</h4>
         <Link to = "/register">Kliknite ovdje za registraciju</Link>
         <p><br></br></p>
-        <form onSubmit = {handleSubmit}>
+        <form onSubmit = {handleLogin}>
             <label>Korisničko ime ili e-mail: </label>
             <input
                 type = "text"

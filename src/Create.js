@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import useFetch from './useFetch';
-import axios from "axios";
+import axios from "axios"
+import Cookies from 'js-cookie';
 
 const  Create = () => {
     const [title, setTitle] = useState('');
@@ -53,20 +54,16 @@ const  Create = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const recipe = {title, shortDescription, longDescription, categories, pictureIds};
-        setIsPending(true);
-        console.log(recipe);
-        fetch('/api/recipes', 
-        {
-            method: 'POST',
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(recipe)
-        }).then(()=> {
-            console.log('Novi recipe dodan');
-            console.log({recipe});
-            setIsPending(false);
-            history.push('/');
-        })
+        var token = Cookies.get('JWT');
+        if(token===null){
+            
+        }
+        axios.post('/api/recipes', {title: title, shortDescription: shortDescription, categories: categories, pictureIds: pictureIds}, {headers: { Authorization: "Bearer " + token }})
+        .then((response) => {
+            history.push("/recipes/"+ response.data);
+        }).catch((error) => {
+            console.log(error);
+        });
     }
 
     return (
