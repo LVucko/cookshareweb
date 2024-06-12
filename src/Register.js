@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import { useState } from "react";
+import axios from "axios";
 
 const Register = () => {
     const [file, setFile] = useState('');
@@ -21,31 +22,22 @@ const Register = () => {
         repeatPassword: '',
         pictureId: ''
         })
-    function handleChange(e) {
-        console.log(e.target.files);
-        setFile(URL.createObjectURL(e.target.files[0]));
-        const file = e.target.files[0];
-        const formData = new FormData();
-        formData.append('file', file);
-        fetch('api/upload', {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => {
-            if (response.ok) {
-              return response.text();
-            } else {
-              throw new Error('File upload failed');
+    function handlePictureChange(e) {
+            if(e.target.files[0] === undefined){
+                return;
             }
-          })
-          .then(data => {
-            setUser({...user, pictureId: data});
-            console.log('Server response:', data);
-          })
-          .catch(error => {
-            console.error('Error uploading file:', error);
-          });
-    }
+            setFile(URL.createObjectURL(e.target.files[0]));
+            const file = e.target.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+            axios.post('api/upload', formData,{headers: { "Content-Type": "multipart/form-data" }})
+            .then((response) => {
+                    setUser({...Link, pictureId: [response.data]})
+                }).catch((error) => {
+                    setUser({...Link, pictureId: 0})
+                    console.log(error);
+                });
+        }
     const onUsernameChange = e => {
         setUser({...user, username: e});
         if(e === null || e.length === 0){
@@ -93,15 +85,12 @@ const Register = () => {
     
     const handleSubmit = (e) =>{
         e.preventDefault();
-        fetch('/api/users/register',{
-            method: 'POST',
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(user)
-        }).then(()=> {
-            console.log('new blog added');
-            console.log({user});
-        }
-    )
+        axios.post('/api/users/register', user, {headers: {"Content-Type": "application/json"}})
+        .then((response) => {
+            console.log("sucess");
+        }).catch((error) => {
+            console.log(error);
+        })
     }
 
     return ( 
@@ -162,15 +151,16 @@ const Register = () => {
             <div className="Image">
                     <label>Slika profila:</label>
                     <input type="file"
-                    onChange={handleChange}
+                    onChange={handlePictureChange}
                     accept="image/*" 
+                    
                     />
                     {file && <img src={file} alt="Uploaded"/>}
             </div>
             <label>Polja označena sa <span style={{color: "red"}}>*</span> su obavezna</label>
             <p><br></br></p>
             {((error.username || error.email || error.password || error.repeatPassword) || (!user.username || !user.email || !user.password || !user.repeatPassword)) 
-            && <button id="disabledButton">Registiraj se</button>}
+            && <button id="disabledButton" disabled={true}>Registiraj se</button>}
             {(!error.username && !error.email && !error.password && !error.repeatPassword) && user.username && user.email && user.password && user.repeatPassword 
             && <button>Registiraj se</button>}
         </form>

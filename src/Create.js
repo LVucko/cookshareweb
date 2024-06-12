@@ -1,20 +1,32 @@
 import { useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
+import { Link } from "react-router-dom/cjs/react-router-dom";
 import useFetch from './useFetch';
 import axios from "axios"
 import Cookies from 'js-cookie';
+import { useContext } from "react";
+import UserContext from "./UserContext"
+import { useEffect } from "react";
 
 const  Create = () => {
+    const {userInfo} = useContext(UserContext);
     const [title, setTitle] = useState('');
     const [shortDescription, setShortDescription] = useState('');
     const [longDescription, setLongDescription] = useState('');
-    const [isProcesing, setIsPending] = useState(false);
+    const [allCategories, setCategories] = useState();
     const [categories, setSelectedIds] = useState([]);
-    const [pictureIds, setPictureIds] = useState([]);
+    const [pictureIds, setPictureIds] = useState(['0']);
     const [file, setFile] = useState();
-
+    const [isProcesing, setIsProcessing] = useState(false);
     const history = useHistory();
-    const {data: allCategories, isPending, error} = useFetch('/api/categories');
+
+    useEffect(() => {
+        axios.get('/api/categories').then((response) => {
+        setCategories(response.data);
+        }).catch((error) => {
+            console.log(error);
+        });
+    }, []);
 
     const handleCheckboxChange = (event) => {
     const checkedId = event.target.value;
@@ -27,48 +39,47 @@ const  Create = () => {
     }
 
     function handlePictureChange(e) {
-        console.log(e.target.files);
+        setIsProcessing(true);
+        if(e.target.files[0] === undefined){
+            setFile(undefined);
+            return;
+        }
         setFile(URL.createObjectURL(e.target.files[0]));
         const file = e.target.files[0];
         const formData = new FormData();
         formData.append('file', file);
-        fetch('api/upload', {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => {
-            if (response.ok) {
-              return response.text();
-            } else {
-              throw new Error('File upload failed');
-            }
-          })
-          .then(data => {
-            setPictureIds([data]);
-            console.log('Server response:', data);
-          })
-          .catch(error => {
-            console.error('Error uploading file:', error);
-          });
+        axios.post('api/upload', formData,{headers: { "Content-Type": "multipart/form-data" }})
+            .then((response) => {
+                setIsProcessing(false);
+                setPictureIds([response.data])
+            }).catch((error) => {
+                setIsProcessing(false);
+                console.log(error);
+            });
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setIsProcessing(true);
         var token = Cookies.get('JWT');
         if(token===null){
-            
+            return;
+            //ako istekne token ili nesta
         }
-        axios.post('/api/recipes', {title: title, shortDescription: shortDescription, categories: categories, pictureIds: pictureIds}, {headers: { Authorization: "Bearer " + token }})
+        axios.post('/api/recipes', {title: title, shortDescription: shortDescription, longDescription: longDescription, categories: categories, pictureIds: pictureIds}, {headers: { Authorization: "Bearer " + token }})
         .then((response) => {
+            setIsProcessing(false);
             history.push("/recipes/"+ response.data);
         }).catch((error) => {
+            setIsProcessing(false);
             console.log(error);
         });
     }
-
+    if(userInfo )
     return (
-        <div className = "create">
+        <div className = "register">
             <h2>Dodaj novi recept</h2>
+            <p><br></br></p>
             <form onSubmit = {handleSubmit}>
                 <label>Naziv recepta:</label>
                 <input 
@@ -92,8 +103,6 @@ const  Create = () => {
 
                 ></textarea>
                 <label>Kategorije (barem jedna):</label>
-                {error && <div>{error}</div>}
-                {isPending && <div>Učitavam...</div>}
                 {allCategories && allCategories.map((category) =>(
                     <div className= "categories" key = {category.name}>
                         <label htmlFor={category.name}>
@@ -103,15 +112,24 @@ const  Create = () => {
                     </div>
                 ))}
                 <div className="Image">
-                    <h2>Add Image:</h2>
-                    <input type="file" onChange={handlePictureChange} />
-                    <img src={file} alt="Uploaded"/>
+                    <label>Slika:</label>
+                    <input type="file" accept="image/*" onChange={handlePictureChange} />
+                    {file && <img src={file} alt="Uploaded"/>}
                 </div>
-                {!isProcesing && <button>Dodaj recept</button>}
-                {isProcesing && <button>Dodajem recept....</button>}
+                {!isProcesing &&<button>Dodaj recept</button>}
+                {isProcesing && <button id="disabledButton" disabled={true}>Dodaj recept</button>}
             </form>
         </div>
+            
     );
+    else return (
+    <div className="register">
+        <h2>Morate biti ulogirani kako bi se objavili recept</h2>
+        <p><br></br></p>
+        <Link to = "/login">Kliknite ovdje za prijavu</Link>
+        <p><br></br></p>
+        <Link to = "/register">Kliknite ovdje za registraciju</Link>
+    </div>);
 }
  
 export default Create;

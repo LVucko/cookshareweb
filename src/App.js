@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { decodeToken} from "react-jwt";
 function App() {
+  
   const [userInfo, setUserInfo] = useState(null);
   const login = (userData) => {
     setUserInfo(userData);
@@ -23,7 +24,6 @@ function App() {
   useEffect(() => {
     if(Cookies.get('JWT')){
       login(decodeToken(Cookies.get('JWT')).UserId);
-      console.log(decodeToken(Cookies.get('JWT')).UserId);
     }
     },[]);
 

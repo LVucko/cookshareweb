@@ -51,8 +51,18 @@
   text-decoration: none;
 }
 /* recipe details page */
+.recipe-details  {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: left;
+}
 .recipe-details h2 {
   font-size: 20px;
+  color: #f1356d;
+  margin-bottom: 10px;
+}
+.recipe-details h3 {
+  font-size: 15px;
   color: #f1356d;
   margin-bottom: 10px;
 }
@@ -66,6 +76,14 @@
   padding: 8px;
   border-radius: 8px;
   cursor: pointer;
+}
+.recipe-details #disabledButton{
+  background: hsl(342, 87%, 30%);
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: not-allowed;
 }
 /* create new recipe form */
 .create {
@@ -147,6 +165,19 @@
   box-sizing: border-box;
   display: block;
 }
+.register textarea{
+  width: 100%;
+  padding: 6px 10px;
+  margin-bottom: 2px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  height: 150px;
+  overflow: hidden;
+  box-sizing: border-box;
+  resize:none;
+  display: block;
+}
 .register button {
   background: hsl(342, 87%, 58%);
   color: #fff;
@@ -181,6 +212,22 @@
   border-radius: 8px;
   color: #fff;
   cursor: pointer;
+}
+.comments textarea{
+  width: 100%;
+  padding: 6px 10px;
+  margin-bottom: 2px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  height: 50px;
+  overflow: hidden;
+  box-sizing: border-box;
+  resize:none;
+  display: block;
+}
+.comments button{
+  align-items: center;
 }
 
 input[type=file]::file-selector-button:hover {

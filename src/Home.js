@@ -7,6 +7,8 @@ const Home = () => {
     useEffect(() => {
         axios.get('/api/recipes/latest/10').then((response) => {
         setLatestRecipes(response.data);
+        }).catch((error) => {
+            console.log(error);
         });
     }, []);
 
