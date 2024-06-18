@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import { Link } from "react-router-dom/cjs/react-router-dom";
-import useFetch from './useFetch';
 import axios from "axios"
 import Cookies from 'js-cookie';
 import { useContext } from "react";
@@ -16,7 +15,7 @@ const  Create = () => {
     const [allCategories, setCategories] = useState();
     const [categories, setSelectedIds] = useState([]);
     const [pictureIds, setPictureIds] = useState(['0']);
-    const [file, setFile] = useState();
+    const [file, setFile] = useState('');
     const [isProcesing, setIsProcessing] = useState(false);
     const history = useHistory();
 

@@ -1,15 +1,14 @@
-import { useHistory, useParams } from "react-router-dom/cjs/react-router-dom";
+import { useParams } from "react-router-dom/cjs/react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
 import CommentList from "./CommentList";
-import useFetch from './useFetch';
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useContext } from "react";
 import UserContext from "./UserContext"
 import { decodeToken } from "react-jwt";
 const RecipeDetails = () => {
-    const {userInfo, login} = useContext(UserContext);
+    const {userInfo} = useContext(UserContext);
     const [recipe, setRecipe] = useState('');
     const [comments, setComments] = useState('');
     const [newComment, setNewComment] = useState('');
@@ -17,7 +16,6 @@ const RecipeDetails = () => {
     const [selectedRating, setSelectedRating] = useState("5"); 
     const [userRating, setUserRating] = useState('');
     const {id} = useParams();
-    const history = useHistory();
     useEffect(() => {
         fetchRecipe();
         if(decodeToken(Cookies.get('JWT'))){
@@ -27,6 +25,8 @@ const RecipeDetails = () => {
     },[]);
     const fetchRecipe = () =>{
         axios.get('/api/recipes/' + id).then((response) => {
+            var isodate = new Date(response.data.creationDate);
+            response.data.creationDate = isodate.toLocaleDateString('hr-HR')
             setRecipe(response.data);
         }).catch((error) => {
             console.log(error);
@@ -34,8 +34,6 @@ const RecipeDetails = () => {
     }
     const fetchUserRating = () =>{
         var token = Cookies.get('JWT');
-        console.log(token);
-        console.log(id);
         axios.get("/api/recipes/" + id + "/rating", {headers: { Authorization: "Bearer " + token }})
         .then((response) => {
             setUserRating(response.data);
@@ -61,7 +59,6 @@ const RecipeDetails = () => {
             setUserRating(selectedRating);
             setIsPending(false); 
             fetchRecipe();
-            //window.location.reload();     
         }).catch((error) =>{
             console.log(error);
         });
@@ -71,12 +68,13 @@ const RecipeDetails = () => {
         e.preventDefault();
         const comment = {recipeId: id, comment: newComment};
         setIsPending(true);
-        var token = Cookies.get("JWT")
+        var token = Cookies.get("JWT");
         axios.post("/api/recipes/" + id +"/comments", comment, {headers: { Authorization: "Bearer " + token }})
         .then((response) => {
             console.log('Novi Komentar dodan');
             fetchComments();
             setIsPending(false);
+            setNewComment('');
         }).catch((error) => {
             setIsPending(false);
             console.log(error);
@@ -104,7 +102,6 @@ const RecipeDetails = () => {
                                     } 
                         /> 
                         <label htmlFor="1"> 1 </label> 
-
                         <input 
                                     type="radio" id="2" value="2"
                                     checked={ selectedRating === "2"} 
@@ -113,7 +110,6 @@ const RecipeDetails = () => {
                                     } 
                         /> 
                         <label htmlFor="2"> 2 </label> 
-
                         <input 
                                     type="radio" id="3" value="3"
                                     checked={ selectedRating === "3"} 
@@ -131,7 +127,6 @@ const RecipeDetails = () => {
                                     } 
                         /> 
                         <label htmlFor="4"> 4 </label> 
-
                         <input 
                                     type="radio" id="5" value="5"
                                     checked={ selectedRating === "5"} 
@@ -145,24 +140,41 @@ const RecipeDetails = () => {
                     
                     <p>Autor: <a href = {"/users/" +recipe.userId}>{recipe.username}</a></p>
                     <div>{recipe.shortDescription}</div>
-                    <div>{recipe.creationDate}</div>
+                    <div>Datum kreiranja recepta: {recipe.creationDate}</div>
                     
                     <div>{recipe.longDescription}</div>
                     <img src={"/../../" + recipe.pathToPictures[0]} alt="Recipe"></img>
                 </article>
                 }
-            {!comments && <div>Učitavam komentare</div>}
-            {comments && <CommentList comments= {comments} title = "Komentari" ></CommentList>}
-            <form className="comments" onSubmit = {handleSubmit}>
-                <label>Komentiraj: </label>
-                <textarea 
+            {userInfo &&
+                <form className="comment-new" onSubmit = {handleSubmit}>
+                    <textarea 
+                    placeholder="Napišite novi komentar"
                     required 
                     value = {newComment} 
                     onChange = {(e) => setNewComment(e.target.value)}
-                ></textarea>
-                {!isPending && <button>Dodaj komentar</button>}
-                {isPending && <button id="disabledButton" disabled={true}>Dodajem komentar....</button>}
-            </form>
+                    ></textarea>
+                    {!isPending && <button>Dodaj komentar</button>}
+                    {isPending && <button id="disabledButton" disabled={true}>Dodajem komentar....</button>}
+                </form>
+            }
+            {!userInfo &&
+                <form className="comment-new">
+                    <textarea 
+                    placeholder="Morate biti prijavljeni kako bi ste ostavili novi komentar"
+                    disabled = {true}
+                    onChange = {(e) => setNewComment(e.target.value)}
+                    ></textarea>
+                    <button id="disabledButton" disabled={true}>Komentirajte</button>
+                </form>
+            }
+            <h2>Komentari:</h2>
+            {!userInfo && <div>Prijavite se da bi ste mogli komentirati.</div>}
+            {!comments && <div>Učitavam komentare</div>}
+            {comments && <CommentList comments= {comments}></CommentList>}
+            {comments.length === 0 && <div>Ovaj recept još nema komentara, budite prvi!</div>}
+            
+            
         </div>
 
     );

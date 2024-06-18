@@ -19,7 +19,7 @@ const UserDetails = () => {
     }, [id]);
 
     return (  
-        <div className= "recipe-details">
+        <div>
             {!user && <div>Loading...</div>}
             {user &&
             <article>

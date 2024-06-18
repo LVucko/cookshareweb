@@ -5,7 +5,7 @@ const Navbar = () => {
     const {userInfo, logout} = useContext(UserContext);
     return (
         <nav className="navbar">
-            <h1>The Cook Book</h1>
+            <h1>CookShare</h1>
             <div className = "links">
                 <Link to = "/">Početna</Link>
                 {userInfo && <Link to = "/create" className = "create">Predaj recept</Link>}

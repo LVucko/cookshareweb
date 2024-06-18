@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom/cjs/react-router-dom";
+import { Link, useHistory } from "react-router-dom/cjs/react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 
 const Register = () => {
+    const history = useHistory();
     const [file, setFile] = useState('');
     const [user, setUser] = useState({
         username: '', 
@@ -11,7 +12,7 @@ const Register = () => {
         phone: '',
         password: '',
         repeatPassword: '',
-        pictureId: '4'
+        pictureId: '0'
     })
     const [error, setError] = useState({
         username: '', 
@@ -22,8 +23,10 @@ const Register = () => {
         repeatPassword: '',
         pictureId: ''
         })
+
     function handlePictureChange(e) {
             if(e.target.files[0] === undefined){
+                setFile(undefined);
                 return;
             }
             setFile(URL.createObjectURL(e.target.files[0]));
@@ -32,12 +35,13 @@ const Register = () => {
             formData.append('file', file);
             axios.post('api/upload', formData,{headers: { "Content-Type": "multipart/form-data" }})
             .then((response) => {
-                    setUser({...Link, pictureId: [response.data]})
+                    setUser({...user, pictureId: response.data})
                 }).catch((error) => {
-                    setUser({...Link, pictureId: 0})
+                    setUser({...user, pictureId: 0})
                     console.log(error);
                 });
         }
+
     const onUsernameChange = e => {
         setUser({...user, username: e});
         if(e === null || e.length === 0){
@@ -54,6 +58,7 @@ const Register = () => {
         }
         
     }
+
     const onEmailChange = e => {
         setUser({...user, email: e});
         if(e.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6}$/i)){
@@ -63,6 +68,7 @@ const Register = () => {
             setError({...error, email: "Molimo unesite ispravan e-mail"});
         }
     }
+
     const onPasswordChange = e => {
         setUser({...user, password: e});
         if(e.match(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\S+$).{8,20}$/)){
@@ -73,6 +79,7 @@ const Register = () => {
         }
         
     }
+    
     const onRepeatPasswordChange = e => {
         setUser({...user, repeatPassword: e});
         if(e === user.password){
@@ -87,12 +94,13 @@ const Register = () => {
         e.preventDefault();
         axios.post('/api/users/register', user, {headers: {"Content-Type": "application/json"}})
         .then((response) => {
-            console.log("sucess");
+            if(response.status === 200)
+                history.push("/");
         }).catch((error) => {
             console.log(error);
         })
     }
-
+    
     return ( 
     <div className = "register">
         <h2>Kreiranje novog korisničkog profila:</h2>
