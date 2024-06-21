@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom/cjs/react-router-dom";
+import StarRating from "./StarRating";
 
 const RecipeList = ({recipes, title, handleDelete}) => {
     const getStars = (rating) =>{
@@ -14,15 +15,16 @@ const RecipeList = ({recipes, title, handleDelete}) => {
                         key = {recipe.id} to = {`/recipes/${recipe.id}`} style={{ 
                         backgroundImage: `url(${"/../../" + recipe.pathToPictures[0]})`
                       }}>
-                        <div className="image-container"></div>
+                        <div className="row">
+                        <div></div> <StarRating rating={recipe.averageRating}></StarRating>
+                        </div>
                         <div className="text-container">
                             <div className="text-container-header">
                                 <h2>{recipe.title}</h2>
                                 <h3>Autor: {recipe.username}</h3>
                             </div>
-                            <p>Ocjena: {getStars(recipe.averageRating)}</p>
-                        <p>Kategorije: {recipe.categories.toString().replace(',',", ")}</p>
-                        <p>{recipe.shortDescription}</p>
+                            <p>Kategorije: {recipe.categories.toString().replace(',',", ")}</p>
+                            <p>{recipe.shortDescription}</p>
                         </div>
                         
                     </Link>

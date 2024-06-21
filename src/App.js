@@ -12,7 +12,6 @@ import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { decodeToken} from "react-jwt";
 function App() {
-  
   const [userInfo, setUserInfo] = useState(null);
   const login = (userData) => {
     setUserInfo(userData);
@@ -22,10 +21,11 @@ function App() {
     setUserInfo(null);
   };
   useEffect(() => {
+    console.log("running app useffect");
     if(Cookies.get('JWT')){
       login(decodeToken(Cookies.get('JWT')).UserId);
     }
-    },[]);
+  },[]);
 
   return (
     <UserContext.Provider value={{ userInfo, login, logout }}>
@@ -60,7 +60,6 @@ function App() {
         </div>
       </Router>
     </UserContext.Provider>
-    
   );
 }
 

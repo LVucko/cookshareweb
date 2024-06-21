@@ -6,6 +6,7 @@
    color: #333;
  }
  .navbar {
+  z-index: 99;
   position: sticky;
   top: 0;
   padding: 20px;
@@ -49,7 +50,7 @@
   height: 15em;
   display:flex;
   text-decoration: none;
-  justify-content: space-evenly;
+  justify-content: space-between;
   flex-direction: column;
   width:47%;
   margin: 3px;
@@ -59,6 +60,7 @@
   border-radius: 8px;
   background-size: cover;
   background-position: 50% 50%;
+  position: relative;
 }
 
 .recipe-preview h2 {
@@ -70,30 +72,41 @@
   text-decoration: none;
 }
 
-.image-container{
-  max-width: 100%;
-  width: 100%;
-  height: 60%;
-  text-align: center;
-  object-fit: fill;
-  overflow:hidden;
-}
+
 .text-container{
   background-color: #ffffffc4;
   text-decoration: none;
-  max-width: 100%;
   width: 100%;
-  height: 40%;
+  height: 30%;
   border-color: #ffffff;
   border-radius: 8px;
   object-fit:contain;
   overflow:hidden;
+  position: absolute;
+  bottom: 0;
 }
 .recipe-preview:hover {
   background-blend-mode: color;
   background-color: rgba(0,0,0,0.1);
   box-shadow: 1px 3px 5px rgba(0,0,0,0.2);
 } 
+.recipe-preview:hover .text-container{
+  transition: height 0.5s;
+  height: 80%
+}
+.recipe-preview:hover .image-container{
+  transition: height 0.5s;
+  height: 20%
+}
+.recipe-preview:not .text-container{
+  transition: height 0.5s;
+  height: 60%
+}
+.recipe-preview:not .image-container{
+  transition: height 0.5s;
+  height: 40%
+}
+
 .text-container-header{
   display: flex;
   justify-content: space-between;
@@ -102,47 +115,47 @@
 /* recipe details page */
 .recipe-details  {
   max-width: 100%;
-  text-align: left;
 }
 
-.recipe-details h2 {
+.recipe-details #userRating{
+  color:#f1356d;
   font-size: 20px;
-  color: #f1356d;
-  margin-bottom: 10px;
+  font-weight: bold;
 }
-.recipe-details h3 {
-  font-size: 15px;
-  color: #f1356d;
-  margin-bottom: 10px;
+.row{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
-.recipe-details div {
-  margin-bottom: 2px
+.tight-row{
+  display:flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
-.recipe-details button {
-  background: #f1356d;
-  color: #fff;
-  border: 0;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.recipe-details #disabledButton{
-  background: hsl(342, 87%, 30%);
-  color: #fff;
-  border: 0;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: not-allowed;
+.last-row{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-bottom: 1px solid;
+  border-color: #f1356d;
+  align-items: center;
 }
 
 .recipe-details img{
-  max-height: 50%;
+  display:block;
+  margin:auto;
+  max-height: 400px;
   max-width: 90%;
   border: 2px fill;
   border-radius: 8px;
   border-color: #fff;
 }
 
+.recipe-details h3{
+  color:#f1356d;
+}
 /* not found */
 .not-found{
   text-align: center;
@@ -159,7 +172,7 @@
   padding: 6px 10px;
   margin: 10px 0;
 }
-
+/*Register*/
 .register {
   max-width: 400px;
   margin: auto;
@@ -245,7 +258,30 @@
   color: #fff;
   cursor: pointer;
 }
+/* recipe rating */
+.recipe-rating {
+  display: inline-block;
+}
+.recipe-rating * {
+  float: right;
+}
+.recipe-rating input {
+  display: none;
+}
+.recipe-rating label {
+  font-size: 18px;
+}
+.recipe-rating label:hover{
+  color: #f1356d;
+}
 
+.recipe-rating label:hover ~ label {
+  color: #f1356d;
+}
+
+.recipe-rating input:checked ~ label {
+  color: #f1356d;
+}
 /*Comments */
 
 .comment{
@@ -261,12 +297,23 @@
   justify-content: space-between;
 }
 /*comment-new*/
-
-.comment-new button{
-  align-items: center;
-  text-align: right;
-  float:right;
+.comment-new button {
+  background: #f1356d;
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
 }
+.comment-new #disabledButton{
+  background: hsl(342, 87%, 30%);
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: not-allowed;
+}
+
 .comment-new textarea{
   margin-top: 10px;
   width: 100%;
@@ -295,3 +342,22 @@ input[type=file]::file-selector-button:hover {
 .categories input[type=checkbox]{ 
   flex: none; 
 } 
+
+/* StarRating */
+.star-container{
+  position: relative;
+}
+.stars{
+  color:#f1356d;
+  top: 0;
+  left: 0;
+  z-index: 5;
+}
+
+.empty-stars{
+  z-index: 10;
+  position: absolute;
+  top: 0;
+  left: 0;
+  color:#333
+}

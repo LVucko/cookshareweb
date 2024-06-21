@@ -2,12 +2,16 @@ import RecipeList from './RecipeList';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import axios from 'axios';
+import RecipeSelector from './RecipeSelector';
 const Home = () => {
     const [latestRecipes, setLatestRecipes] = useState(null);
-    const [numberOfRecipes, setNumberOfRecipes] = useState('10');
+    const [numberOfRecipes, setNumberOfRecipes] = useState('');
+    const [sortingBy, setSortingBy] = useState('');
     useEffect(() => {
-        fetchLatestRecipes(10);
-    }, []);
+        if(numberOfRecipes){
+            fetchLatestRecipes(numberOfRecipes);
+        }
+    }, [numberOfRecipes]);
     function fetchLatestRecipes(number){
         axios.get('/api/recipes/latest/'+number).then((response) => {
             setLatestRecipes(response.data);
@@ -15,22 +19,9 @@ const Home = () => {
                 console.log(error);
             });
     }
-    const handleChange = (event) => {
-        setNumberOfRecipes(event.target.value);
-        fetchLatestRecipes(event.target.value);
-      };
-
-    return (  
+    return (
         <div>
-            <div>
-                <label>Broj prikazanih recepata:  </label>
-                <select value={numberOfRecipes} onChange={handleChange}>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                </select>
-
-            </div>
+            <RecipeSelector passSorting={(data)=>{setSortingBy(data)}} passNumber={(data)=>{setNumberOfRecipes(data)}}></RecipeSelector>
             {!latestRecipes && <div>Učitavam recepte...</div>}
             {latestRecipes && <RecipeList recipes= {latestRecipes} title = "Najnoviji recepti: " ></RecipeList>}
         </div>
