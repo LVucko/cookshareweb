@@ -4,17 +4,17 @@ import { useState } from 'react';
 import axios from 'axios';
 import RecipeSelector from './RecipeSelector';
 const Home = () => {
-    const [latestRecipes, setLatestRecipes] = useState(null);
+    const [recipes, setRecipes] = useState(null);
     const [numberOfRecipes, setNumberOfRecipes] = useState('');
     const [sortingBy, setSortingBy] = useState('');
     useEffect(() => {
         if(numberOfRecipes){
-            fetchLatestRecipes(numberOfRecipes);
+            fetchRecipes(numberOfRecipes);
         }
-    }, [numberOfRecipes]);
-    function fetchLatestRecipes(number){
-        axios.get('/api/recipes/latest/'+number).then((response) => {
-            setLatestRecipes(response.data);
+    }, [sortingBy, numberOfRecipes]);
+    function fetchRecipes(number){
+        axios.get('/api/recipes/' +sortingBy+ '/'+number).then((response) => {
+            setRecipes(response.data);
             }).catch((error) => {
                 console.log(error);
             });
@@ -22,8 +22,8 @@ const Home = () => {
     return (
         <div>
             <RecipeSelector passSorting={(data)=>{setSortingBy(data)}} passNumber={(data)=>{setNumberOfRecipes(data)}}></RecipeSelector>
-            {!latestRecipes && <div>Učitavam recepte...</div>}
-            {latestRecipes && <RecipeList recipes= {latestRecipes} title = "Najnoviji recepti: " ></RecipeList>}
+            {!recipes && <div>Učitavam recepte...</div>}
+            {recipes && <RecipeList recipes= {recipes}></RecipeList>}
         </div>
     );
 }

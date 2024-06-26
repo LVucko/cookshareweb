@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 function RecipeSelector({ passSorting, passNumber }) {
-    const [number, setNumber] = useState('10');
+    const [number, setNumber] = useState('15');
     const [sorting, setSorting] = useState('latest');
     useEffect(() => {
         passNumber(number);
@@ -23,16 +23,16 @@ function RecipeSelector({ passSorting, passNumber }) {
                     <select value={sorting} onChange={handleSortingChange}>
                         <option value="latest">najnoviji</option>
                         <option value="best">najbolje ocjenjeni</option>
-                        <option value="worst">najmanje ocjenjeni</option>
+                        <option value="least">najmanje ocjenjeni</option>
                     </select>
 
                 </div>
                 <div>
                     <label>Broj prikazanih recepata:  </label>
                     <select value={number} onChange={handleNumberChange}>
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="50">50</option>
+                        <option value="15">15</option>
+                        <option value="30">30</option>
+                        <option value="60">60</option>
                     </select>
 
                 </div>

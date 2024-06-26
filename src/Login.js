@@ -26,7 +26,7 @@ const Login = () => {
             const date = new Date();
             date.setTime(date.getTime() + expiresIn);
             Cookies.set('JWT', token, {expires : date})
-            login(decodeToken(token).UserId);
+            login({userId: decodeToken(Cookies.get("JWT")).UserId, role:decodeToken(Cookies.get("JWT")).Role});
             setIsProcessing(false);
             history.push('/');
         }).catch((error) => {

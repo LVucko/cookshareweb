@@ -5,6 +5,7 @@
    font-family: "Roboto";
    color: #333;
  }
+
  .navbar {
   z-index: 99;
   position: sticky;
@@ -12,18 +13,20 @@
   padding: 20px;
   display: flex;
   align-items: center;
-  max-width: 700px;
+  max-width: 1400px;
   margin: 0 auto;
   border-bottom: 1px solid #f2f2f2;
   background-color: #fff;
 }
 .navbar h1 {
   color: #f1356d;
+  font-size: 30px;
 }
 .navbar .links {
   margin-left: auto;
 }
 .navbar a {
+  font-size: 20px;
   margin-left: 16px;
   text-decoration: none;
   padding: 6px;
@@ -32,10 +35,12 @@
   color: #f1356d;
 }
 .content {
-  max-width: 700px;
+  max-width: 1400px;
   margin: 0px auto;
   padding: 0px;
   padding-top: 10px;
+  background-color: #fff;
+  height: 100%;
 }
 
 /* recipe previews / list */
@@ -52,7 +57,9 @@
   text-decoration: none;
   justify-content: space-between;
   flex-direction: column;
-  width:47%;
+  width:32%;
+  min-width: 300px;
+  max-width: 500px;
   margin: 3px;
   padding:0px;
   border: 1px solid;
@@ -94,18 +101,11 @@
   transition: height 0.5s;
   height: 80%
 }
-.recipe-preview:hover .image-container{
-  transition: height 0.5s;
-  height: 20%
-}
 .recipe-preview:not .text-container{
   transition: height 0.5s;
   height: 60%
 }
-.recipe-preview:not .image-container{
-  transition: height 0.5s;
-  height: 40%
-}
+
 
 .text-container-header{
   display: flex;
@@ -258,6 +258,13 @@
   color: #fff;
   cursor: pointer;
 }
+
+/* user details */
+
+.user-details img{
+  text-align: center;
+}
+
 /* recipe rating */
 .recipe-rating {
   display: inline-block;
@@ -282,6 +289,14 @@
 .recipe-rating input:checked ~ label {
   color: #f1356d;
 }
+.recipe-rating input:checked ~ label:hover {
+  color: #861b3b;
+}
+.recipe-rating input:checked ~ label:hover ~ label {
+  color: #861b3b;
+}
+
+
 /*Comments */
 
 .comment{
@@ -360,4 +375,11 @@ input[type=file]::file-selector-button:hover {
   top: 0;
   left: 0;
   color:#333
+}
+.recipe-selector{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }

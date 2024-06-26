@@ -21,9 +21,8 @@ function App() {
     setUserInfo(null);
   };
   useEffect(() => {
-    console.log("running app useffect");
     if(Cookies.get('JWT')){
-      login(decodeToken(Cookies.get('JWT')).UserId);
+      login({userId: decodeToken(Cookies.get("JWT")).UserId, role:decodeToken(Cookies.get("JWT")).Role});
     }
   },[]);
 
@@ -57,7 +56,7 @@ function App() {
               </Route>
             </Switch>
           </div>
-        </div>
+        </div>   
       </Router>
     </UserContext.Provider>
   );

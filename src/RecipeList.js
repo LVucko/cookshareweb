@@ -1,14 +1,13 @@
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import StarRating from "./StarRating";
 
-const RecipeList = ({recipes, title, handleDelete}) => {
+const RecipeList = ({recipes}) => {
     const getStars = (rating) =>{
         if(rating < 0) rating = 0;
         return ("★".repeat(Math.round(rating)) + ("☆".repeat(5- Math.round(rating))))
     }
     return (
         <>
-            <h1>{title}</h1>
             <div className = "recipe-list">
                 {recipes.map((recipe) =>(
                     <Link className= "recipe-preview" 

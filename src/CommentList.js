@@ -1,13 +1,27 @@
 import { Link } from "react-router-dom/cjs/react-router-dom";
+import { useContext } from "react";
+import UserContext from "./UserContext"
+import Cookies from "js-cookie";
+import axios from "axios";
 
-const CommentList = ({comments, title, handleDelete}) => {
+const CommentList = ({comments, fetchComments}) => {
+    const {userInfo} = useContext(UserContext);
     const getDate = (isostring) =>{
         var isodate = new Date(isostring);
         return isodate.toLocaleString("Hr-hr");
     }
+    function handleDelete(id){
+        console.log(id);
+        var token = Cookies.get("JWT");
+        axios.delete("/api/recipes/comment/"+ id, {headers: { Authorization: "Bearer " + token }})
+        .then(() => {
+            fetchComments();
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
     return (  
         <div className = "comment-list">
-            <h1>{title}</h1>
             {comments.map((comment) =>(
                 <div className= "comment" key = {comment.id}>
                     <div className  = "comment-header">
@@ -16,7 +30,11 @@ const CommentList = ({comments, title, handleDelete}) => {
                         </Link>
                         <h5>{getDate(comment.time)}</h5>
                     </div>
-                    <p>{comment.comment}</p>
+                    <div className="row">
+                        <p>{comment.comment}</p>
+                        {userInfo && (userInfo.role === "MODERATOR" || userInfo.role === "ADMIN")  && <button onClick={()=>{handleDelete(comment.id)}}> X </button>}
+                    </div>
+                    
                 </div>
             ))}
         </div>

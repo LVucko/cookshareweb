@@ -1,19 +1,40 @@
 
-import {useState, useEffect} from "react";
+import {useState, useEffect, useContext} from "react";
+import Cookies from "js-cookie";
+import axios from "axios";
+import UserContext from "./UserContext"
 
-function NewComment({passComment, isDisabled, isPending}) {
+function NewComment({id, fetchComments}) {
+    const {userInfo} = useContext(UserContext);
     const [newComment, setNewComment] = useState('');
     const [placeholder, setPlaceholder] = useState('');
+    const [isPending, setIsPending] = useState(false);
+    const [isDisabled, setIsDisabled] = useState(true);
     useEffect(() => {
-        (isDisabled) ? setPlaceholder("Prijavite se kako bi ste mogli komentirati"):setPlaceholder("Unesite svoj komentar");
-    },[isDisabled]);
-    function handleSubmit(e){
+        if(Cookies.get("JWT")){
+            setIsDisabled(false);
+            setPlaceholder("Unesite svoj komentar");
+        }
+        else setPlaceholder("Prijavite se kako bi ste mogli komentirati")
+    },[]);
+
+    function handleComment(e){
         e.preventDefault();
-        passComment(newComment);
-        setNewComment('');
-    };
+        const comment = {recipeId: id, comment: newComment};
+        setIsPending(true);
+        var token = Cookies.get("JWT");
+        axios.post("/api/recipes/" + id +"/comments", comment, {headers: { Authorization: "Bearer " + token }})
+        .then((response) => {
+            fetchComments();
+            setIsPending(false);
+        }).catch((error) => {
+            setIsPending(false);
+            console.log(error);
+        });
+    }
+
     return (
-        <form className="comment-new" onSubmit = {handleSubmit}>
+        <form className="comment-new" onSubmit = {handleComment}>
                     <textarea 
                     placeholder={placeholder}
                     disabled = {isDisabled}

@@ -19,14 +19,16 @@ const UserDetails = () => {
     }, [id]);
 
     return (  
-        <div>
+        <div className="user-details">
             {!user && <div>Loading...</div>}
             {user &&
-            <article>
-                <h2>{user.username}</h2>
-                <div>Datum kreiranja računa: {(user.creationDate.substring(0, 10).replaceAll('-', ' '))}</div>
+            <div>
+                <div className="last-row">
+                    <h2>{user.username}</h2>
+                    <div>Datum kreiranja računa: {(user.creationDate.substring(0, 10).replaceAll('-', ' '))}</div>
+                </div>
                 <img src={"/../../" + user.pathToPicture} alt="Profile"></img>
-            </article>
+            </div>
             }
             <div>
                 {!recipes && <div>Učitavam...</div>}
