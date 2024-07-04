@@ -8,18 +8,22 @@ import Register from './Register';
 import Login from './Login'
 import UserDetails from './UserDetails'
 import UserContext from "./UserContext"
+import RecipeEdit from './RecipeEdit';
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { decodeToken} from "react-jwt";
 function App() {
+  
   const [userInfo, setUserInfo] = useState(null);
   const login = (userData) => {
     setUserInfo(userData);
   };
   const logout = () => {
     Cookies.remove('JWT');
+    console.log(userInfo);
     setUserInfo(null);
   };
+  
   useEffect(() => {
     if(Cookies.get('JWT')){
       login({userId: decodeToken(Cookies.get("JWT")).UserId, role:decodeToken(Cookies.get("JWT")).Role});
@@ -50,6 +54,9 @@ function App() {
               </Route >
               <Route path="/users/:id">
                 <UserDetails/>
+              </Route >
+              <Route path="/edit/:id">
+                <RecipeEdit/>
               </Route >
               <Route path="*">
               <NotFound/>

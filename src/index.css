@@ -52,7 +52,8 @@
   flex-wrap: wrap;
 }
 .recipe-preview {
-  height: 15em;
+  font-size: 120%;
+  height: 250px;
   display:flex;
   text-decoration: none;
   justify-content: space-between;
@@ -81,6 +82,7 @@
 
 
 .text-container{
+  transition: height 0.5s;
   background-color: #ffffffc4;
   text-decoration: none;
   width: 100%;
@@ -92,6 +94,7 @@
   position: absolute;
   bottom: 0;
 }
+
 .recipe-preview:hover {
   background-blend-mode: color;
   background-color: rgba(0,0,0,0.1);
@@ -100,10 +103,6 @@
 .recipe-preview:hover .text-container{
   transition: height 0.5s;
   height: 80%
-}
-.recipe-preview:not .text-container{
-  transition: height 0.5s;
-  height: 60%
 }
 
 
@@ -114,7 +113,9 @@
 
 /* recipe details page */
 .recipe-details  {
-  max-width: 100%;
+  font-size: 120%;
+  margin: auto;
+  max-width: 900px;
 }
 
 .recipe-details #userRating{
@@ -151,6 +152,18 @@
   border: 2px fill;
   border-radius: 8px;
   border-color: #fff;
+}
+
+.recipe-details button {
+  background: hsl(342, 87%, 58%);
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.recipe-details button:hover{
+  background: hsl(342, 87%, 30%);
 }
 
 .recipe-details h3{
@@ -260,7 +273,6 @@
 }
 
 /* user details */
-
 .user-details img{
   text-align: center;
 }
@@ -311,6 +323,18 @@
   flex-wrap: wrap;
   justify-content: space-between;
 }
+.comment-list button {
+  background: hsl(342, 87%, 58%);
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.comment-list button:hover{
+  background: hsl(342, 87%, 30%);
+}
+
 /*comment-new*/
 .comment-new button {
   background: #f1356d;
@@ -376,10 +400,30 @@ input[type=file]::file-selector-button:hover {
   left: 0;
   color:#333
 }
+
 .recipe-selector{
+  margin: 0%;
+  padding-top:10px;
+  padding-bottom:10px;
+  width: 100%;
+  border-radius: 5px;
+  background-color: rgb(227, 227, 227);
   display: flex;
+  justify-content: space-around;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
   align-items: center;
+  margin-bottom: 10px;
+}
+.recipe-selector label{
+  font-size: 20px;
+}
+.recipe-selector select {
+  font-size: 20px;
+  padding: 1px;
+  background-color: #fff;
+  border: 1px solid #ffa2be;
+  border-radius: 0.25rem;
+  color: #333;
+  cursor: pointer;
 }

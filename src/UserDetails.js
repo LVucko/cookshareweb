@@ -25,7 +25,7 @@ const UserDetails = () => {
             <div>
                 <div className="last-row">
                     <h2>{user.username}</h2>
-                    <div>Datum kreiranja računa: {(user.creationDate.substring(0, 10).replaceAll('-', ' '))}</div>
+                    <div>Datum kreiranja računa: {(user.creationDate)}</div>
                 </div>
                 <img src={"/../../" + user.pathToPicture} alt="Profile"></img>
             </div>

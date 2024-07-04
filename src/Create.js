@@ -12,8 +12,8 @@ const  Create = () => {
     const [title, setTitle] = useState('');
     const [shortDescription, setShortDescription] = useState('');
     const [longDescription, setLongDescription] = useState('');
-    const [allCategories, setCategories] = useState();
-    const [categories, setSelectedIds] = useState([]);
+    const [allCategories, setAllCategories] = useState();
+    const [selectedCategories, setSelectedCategories] = useState([]);
     const [pictureIds, setPictureIds] = useState(['0']);
     const [file, setFile] = useState('');
     const [isProcesing, setIsProcessing] = useState(false);
@@ -21,7 +21,7 @@ const  Create = () => {
 
     useEffect(() => {
         axios.get('/api/categories').then((response) => {
-        setCategories(response.data);
+        setAllCategories(response.data);
         }).catch((error) => {
             console.log(error);
         });
@@ -30,9 +30,9 @@ const  Create = () => {
     const handleCheckboxChange = (event) => {
     const checkedId = event.target.value;
     if(event.target.checked){
-        setSelectedIds([...categories,checkedId])
+        setSelectedCategories([...selectedCategories,checkedId])
     }else{
-        setSelectedIds(categories.filter(id=>id !== checkedId))
+        setSelectedCategories(selectedCategories.filter(id=>id !== checkedId))
     }
     
     }
@@ -47,7 +47,7 @@ const  Create = () => {
         const file = e.target.files[0];
         const formData = new FormData();
         formData.append('file', file);
-        axios.post('api/upload', formData,{headers: { "Content-Type": "multipart/form-data" }})
+        axios.post('/api/upload', formData,{headers: { "Content-Type": "multipart/form-data" }})
             .then((response) => {
                 setIsProcessing(false);
                 setPictureIds([response.data])
@@ -65,7 +65,7 @@ const  Create = () => {
             return;
             //ako istekne token ili nesta
         }
-        axios.post('/api/recipes', {title: title, shortDescription: shortDescription, longDescription: longDescription, categories: categories, pictureIds: pictureIds}, {headers: { Authorization: "Bearer " + token }})
+        axios.post('/api/recipes', {title: title, shortDescription: shortDescription, longDescription: longDescription, categories: selectedCategories, pictureIds: pictureIds}, {headers: { Authorization: "Bearer " + token }})
         .then((response) => {
             setIsProcessing(false);
             history.push("/recipes/"+ response.data);

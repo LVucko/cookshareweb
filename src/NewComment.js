@@ -2,10 +2,8 @@
 import {useState, useEffect, useContext} from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-import UserContext from "./UserContext"
 
 function NewComment({id, fetchComments}) {
-    const {userInfo} = useContext(UserContext);
     const [newComment, setNewComment] = useState('');
     const [placeholder, setPlaceholder] = useState('');
     const [isPending, setIsPending] = useState(false);
@@ -26,6 +24,7 @@ function NewComment({id, fetchComments}) {
         axios.post("/api/recipes/" + id +"/comments", comment, {headers: { Authorization: "Bearer " + token }})
         .then((response) => {
             fetchComments();
+            setNewComment('');
             setIsPending(false);
         }).catch((error) => {
             setIsPending(false);

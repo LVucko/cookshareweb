@@ -4,17 +4,18 @@ import { useEffect } from "react";
 import CommentList from "./CommentList";
 import axios from "axios";
 import { useContext } from "react";
+import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import UserContext from "./UserContext"
 import RecipeRating from "./RecipeRating";
 import NewComment from "./NewComment";
 import StarRating from "./StarRating";
+import Cookies from "js-cookie";
 const RecipeDetails = () => {
-
     const {userInfo} = useContext(UserContext);
     const [recipe, setRecipe] = useState('');
     const [comments, setComments] = useState('');
-
     const {id} = useParams();
+    const history = useHistory();
     useEffect(() => {
         fetchRecipe();
         fetchComments();
@@ -23,7 +24,7 @@ const RecipeDetails = () => {
     const fetchRecipe = () =>{
         axios.get('/api/recipes/' + id).then((response) => {
             var isodate = new Date(response.data.creationDate);
-            response.data.creationDate = isodate.toLocaleDateString('hr-HR')
+            response.data.creationDate = isodate.toLocaleDateString('hr-HR');
             setRecipe(response.data);
         }).catch((error) => {
             console.log(error);
@@ -45,7 +46,18 @@ const RecipeDetails = () => {
             console.log(error);
         });
     }
-
+    function handleDelete(){
+        var token = Cookies.get("JWT");
+        axios.delete("/api/recipes/"+ id, {headers: { Authorization: "Bearer " + token }})
+        .then(() => {
+            history.push("/");
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+    function handleEdit(){
+        history.push("/edit/"+id);
+    }
     return (  
         <div className= "recipe-details">
             {!recipe && <div>Loading...</div>}
@@ -64,9 +76,14 @@ const RecipeDetails = () => {
                 <div className="last-row">
                     <h4>Autor: <a href = {"/users/" +recipe.userId}>{recipe.username}</a></h4>
                     <h4>Datum kreiranja recepta: {recipe.creationDate}</h4>
+                    
                 </div>
-                    <div>{recipe.shortDescription}</div>
-                    <div>{recipe.longDescription}</div>
+                <div>{recipe.shortDescription}</div>
+                <div>{recipe.longDescription}</div>
+                {userInfo && (userInfo.role === "MODERATOR" || userInfo.role === "ADMIN" || userInfo.userId === id)  && 
+                <button onClick={()=>{handleDelete()}}>Obriši recept</button>}
+                {userInfo && (userInfo.role === "MODERATOR" || userInfo.role === "ADMIN" || userInfo.userId === recipe.userId)  && 
+                <button onClick={()=>{handleEdit()}}>Uredi recept</button>}
                 <img src={"/../../" + recipe.pathToPictures[0]} alt="Recipe"></img>
             </article>
             }

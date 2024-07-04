@@ -6,14 +6,14 @@ import RecipeSelector from './RecipeSelector';
 const Home = () => {
     const [recipes, setRecipes] = useState(null);
     const [numberOfRecipes, setNumberOfRecipes] = useState('');
+    const [category, setCategory] = useState('');
     const [sortingBy, setSortingBy] = useState('');
     useEffect(() => {
-        if(numberOfRecipes){
-            fetchRecipes(numberOfRecipes);
-        }
-    }, [sortingBy, numberOfRecipes]);
-    function fetchRecipes(number){
-        axios.get('/api/recipes/' +sortingBy+ '/'+number).then((response) => {
+        if(numberOfRecipes && category && sortingBy)
+            fetchRecipes();
+    }, [sortingBy, numberOfRecipes, category]);
+    function fetchRecipes(){
+        axios.get('/api/recipes/' +sortingBy+ '/'+ numberOfRecipes + '/category/' + category).then((response) => {
             setRecipes(response.data);
             }).catch((error) => {
                 console.log(error);
@@ -21,8 +21,8 @@ const Home = () => {
     }
     return (
         <div>
-            <RecipeSelector passSorting={(data)=>{setSortingBy(data)}} passNumber={(data)=>{setNumberOfRecipes(data)}}></RecipeSelector>
-            {!recipes && <div>Učitavam recepte...</div>}
+            <RecipeSelector passSorting={(data)=>{setSortingBy(data)}} passNumber={(data)=>{setNumberOfRecipes(data)}} passCategory={(data)=>{setCategory(data)}}></RecipeSelector>
+            {!recipes && <img className="row" alt="loading" src={"loading.gif"}></img>}
             {recipes && <RecipeList recipes= {recipes}></RecipeList>}
         </div>
     );

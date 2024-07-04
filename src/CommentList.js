@@ -11,7 +11,6 @@ const CommentList = ({comments, fetchComments}) => {
         return isodate.toLocaleString("Hr-hr");
     }
     function handleDelete(id){
-        console.log(id);
         var token = Cookies.get("JWT");
         axios.delete("/api/recipes/comment/"+ id, {headers: { Authorization: "Bearer " + token }})
         .then(() => {
@@ -32,7 +31,8 @@ const CommentList = ({comments, fetchComments}) => {
                     </div>
                     <div className="row">
                         <p>{comment.comment}</p>
-                        {userInfo && (userInfo.role === "MODERATOR" || userInfo.role === "ADMIN")  && <button onClick={()=>{handleDelete(comment.id)}}> X </button>}
+                        {userInfo && (userInfo.role === "MODERATOR" || userInfo.role === "ADMIN")  && 
+                        <button onClick={()=>{handleDelete(comment.id)}}>Obriši</button>}
                     </div>
                     
                 </div>
