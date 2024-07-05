@@ -36,7 +36,6 @@ const RecipeEdit = () => {
         }).catch((error) => {
             console.log(error);
         });
-    
     }, []);
 
     useEffect(() => {
@@ -78,7 +77,7 @@ const RecipeEdit = () => {
             }).catch((error) => {
                 setIsProcessing(false);
                 console.log(error);
-            });
+        });
     }
 
     const handleSubmit = (e) => {
@@ -125,7 +124,6 @@ const RecipeEdit = () => {
                     required 
                     value = {longDescription} 
                     onChange = {(e) => setLongDescription(e.target.value)}
-
                 ></textarea>
                 <label>Kategorije (barem jedna):</label>
                 {recipeCategories && allCategories && allCategories.map((category) =>(

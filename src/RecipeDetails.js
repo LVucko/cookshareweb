@@ -1,15 +1,13 @@
-import { useParams } from "react-router-dom/cjs/react-router-dom";
-import { useState } from "react";
-import { useEffect } from "react";
-import CommentList from "./CommentList";
+import { useParams, useHistory } from "react-router-dom/cjs/react-router-dom";
+import { useState, useContext, useEffect } from "react";
 import axios from "axios";
-import { useContext } from "react";
-import { useHistory } from "react-router-dom/cjs/react-router-dom";
+import Cookies from "js-cookie";
+import CommentList from "./CommentList";
 import UserContext from "./UserContext"
 import RecipeRating from "./RecipeRating";
 import NewComment from "./NewComment";
 import StarRating from "./StarRating";
-import Cookies from "js-cookie";
+
 const RecipeDetails = () => {
     const {userInfo} = useContext(UserContext);
     const [recipe, setRecipe] = useState('');
@@ -69,21 +67,26 @@ const RecipeDetails = () => {
                     {recipe.averageRating >= 0 && <h3><StarRating rating={recipe.averageRating} title = {"Ocjena:"}></StarRating></h3>}
                 </div>
                 <div className="row">
-                <h3>Kategorije: {recipe.categories.toString()}</h3>
+                <h3>Kategorije: {recipe.categories.toString().replaceAll(',',", ")}</h3>
                     {!userInfo && <h3>Prijavite se za ocjenjivanje</h3>}
                     {userInfo && <h3 className="tight-row">Vaša ocjena: <RecipeRating id={id} fetchAverageRating={fetchAverageRating}></RecipeRating></h3>}
                 </div>
-                <div className="last-row">
+                <div className="row">
                     <h4>Autor: <a href = {"/users/" +recipe.userId}>{recipe.username}</a></h4>
                     <h4>Datum kreiranja recepta: {recipe.creationDate}</h4>
-                    
                 </div>
+                <div className="row">
+                    <div></div>
+                    <div>
+                        {userInfo && (userInfo.role === "MODERATOR" || userInfo.role === "ADMIN" || userInfo.userId === recipe.userId)  && 
+                        <button onClick={()=>{handleDelete()}}>Obriši recept</button>}
+                        {userInfo && (userInfo.role === "MODERATOR" || userInfo.role === "ADMIN" || userInfo.userId === recipe.userId)  && 
+                        <button onClick={()=>{handleEdit()}}>Uredi recept</button>}
+                    </div>
+                </div>
+                <div className="last-row"></div>
                 <div>{recipe.shortDescription}</div>
                 <div>{recipe.longDescription}</div>
-                {userInfo && (userInfo.role === "MODERATOR" || userInfo.role === "ADMIN" || userInfo.userId === id)  && 
-                <button onClick={()=>{handleDelete()}}>Obriši recept</button>}
-                {userInfo && (userInfo.role === "MODERATOR" || userInfo.role === "ADMIN" || userInfo.userId === recipe.userId)  && 
-                <button onClick={()=>{handleEdit()}}>Uredi recept</button>}
                 <img src={"/../../" + recipe.pathToPictures[0]} alt="Recipe"></img>
             </article>
             }

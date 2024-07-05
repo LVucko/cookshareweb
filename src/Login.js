@@ -28,7 +28,7 @@ const Login = () => {
             Cookies.set('JWT', token, {expires : date})
             login({userId: decodeToken(Cookies.get("JWT")).UserId, role:decodeToken(Cookies.get("JWT")).Role});
             setIsProcessing(false);
-            history.push('/');
+            history.goBack();
         }).catch((error) => {
             if(error.response.status === 404){
                 setLoginError("Ne postoji korisnik s tim imenom");

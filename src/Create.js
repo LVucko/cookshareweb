@@ -74,8 +74,8 @@ const  Create = () => {
             console.log(error);
         });
     }
-    if(userInfo )
-    return (
+    if(userInfo)
+    return(
         <div className = "register">
             <h2>Dodaj novi recept</h2>
             <p><br></br></p>

@@ -28,7 +28,7 @@ const UserDetails = () => {
                     <div>Datum kreiranja računa: {(user.creationDate)}</div>
                 </div>
                 <img src={"/../../" + user.pathToPicture} alt="Profile"></img>
-            </div>
+            </div> 
             }
             <div>
                 {!recipes && <div>Učitavam...</div>}

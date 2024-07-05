@@ -5,7 +5,7 @@ const Navbar = () => {
     const {userInfo, logout} = useContext(UserContext);
     return (
         <nav className="navbar">
-            <h1>C<span style={{color: '#4d4d4d'}}>ook</span>S<span style={{color: '#4d4d4d'}}>hare</span></h1>
+            <Link to = "/"><h1>C<span style={{color: '#4d4d4d'}}>ook</span>S<span style={{color: '#4d4d4d'}}>hare</span></h1></Link>
             <div className = "links">
                 <Link to = "/">Početna</Link>
                 {userInfo && <Link to = "/create" className = "create">Predaj recept</Link>}
@@ -14,7 +14,7 @@ const Navbar = () => {
                 {userInfo && <Link to = "" onClick={logout}>Odjava</Link>}
             </div>
         </nav>
-      );
+    );
 }
  
 export default Navbar;

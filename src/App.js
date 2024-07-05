@@ -1,6 +1,9 @@
+import { BrowserRouter as Router,  Route, Switch } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
+import { decodeToken} from "react-jwt";
 import Navbar from './Navbar';
 import Home from './Home';
-import { BrowserRouter as Router,  Route, Switch } from 'react-router-dom';
 import Create from './Create';
 import RecipeDetails from './RecipeDetails';
 import NotFound from './NotFound';
@@ -9,11 +12,8 @@ import Login from './Login'
 import UserDetails from './UserDetails'
 import UserContext from "./UserContext"
 import RecipeEdit from './RecipeEdit';
-import { useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
-import { decodeToken} from "react-jwt";
+
 function App() {
-  
   const [userInfo, setUserInfo] = useState(null);
   const login = (userData) => {
     setUserInfo(userData);

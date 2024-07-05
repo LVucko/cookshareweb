@@ -22,7 +22,7 @@ const Home = () => {
     return (
         <div>
             <RecipeSelector passSorting={(data)=>{setSortingBy(data)}} passNumber={(data)=>{setNumberOfRecipes(data)}} passCategory={(data)=>{setCategory(data)}}></RecipeSelector>
-            {!recipes && <img className="row" alt="loading" src={"loading.gif"}></img>}
+            {!recipes && <div className="tight-row"><img className="row" alt="loading" src={"loading.gif"}></img></div>}
             {recipes && <RecipeList recipes= {recipes}></RecipeList>}
         </div>
     );

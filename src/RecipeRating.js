@@ -22,7 +22,6 @@ function RecipeRating({id, fetchAverageRating}) {
     function handleRating(rating){
         if(isDisabled) return;
         setIsDisabled(true);
-        console.log(selectedRating);
         setSelectedRating(rating);
         const newRating = {recipeId: id, rating: rating};
         var token = Cookies.get('JWT');
