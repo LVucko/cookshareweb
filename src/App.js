@@ -12,6 +12,7 @@ import Login from './Login'
 import UserDetails from './UserDetails'
 import UserContext from "./UserContext"
 import RecipeEdit from './RecipeEdit';
+import AdminPanel from './AdminPanel';
 
 function App() {
   const [userInfo, setUserInfo] = useState(null);
@@ -57,6 +58,9 @@ function App() {
               </Route >
               <Route path="/edit/:id">
                 <RecipeEdit/>
+              </Route >
+              <Route path="/admin">
+                <AdminPanel/>
               </Route >
               <Route path="*">
               <NotFound/>

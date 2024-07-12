@@ -132,8 +132,17 @@
 .tight-row{
   display:flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+}
+.half-containers {
+  border: 1px solid;
+  border-color: #333;
+  height: 600px;
+  min-width: 300px;
+  width: 45%;
+  overflow:auto
 }
 .last-row{
   display: flex;
@@ -429,4 +438,93 @@ input[type=file]::file-selector-button:hover {
   border-radius: 0.25rem;
   color: #333;
   cursor: pointer;
+}
+.category-list{
+  text-align: left;
+  width: 100%;
+}
+.category-row{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid;
+  border-color: #861b3b;
+}
+/* admin-panel */
+
+.admin-panel .h1{
+  text-align: center;
+  margin:auto;
+  width:100%;
+}
+.admin-container{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.first-column{
+  display:flex;
+  flex-basis: 70%;
+}
+.second-column{
+  flex-direction: column;
+  display:flex;
+  flex-basis:30%;
+}
+.comments-container{
+  border: 1px solid #333;
+  max-height: 500px;
+  overflow: auto;
+}
+.recipe-container{
+  border: 1px solid #333;
+  max-height: 500px;
+  overflow: auto;
+}
+.category-manager{
+  border: 1px solid #333;
+  padding: 2px;
+  max-height: 500px;
+}
+.image-box{
+  border: 1px solid #333;
+  float: left;
+  position: relative;
+  width: 100%;
+  padding: 0;
+}
+.background-image{
+    position: relative;
+    width: 100%;
+
+}
+
+.buttons{
+  height: 100%;
+  width: 100%;
+  position: absolute;
+    top:0;
+    left:0;
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.left-right-button{
+  background-color: #ffffff00;
+  border: 0px;
+  font-size: 200%;
+  
+}
+.left-right-button:hover{
+  background-color: #f83a79af;
+  border: 0px;
+  cursor: pointer;
+}
+.delete-button{
+  background-color: #ffffff00;
+  margin:auto;
+  margin-bottom: 0;
 }

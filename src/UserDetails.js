@@ -11,10 +11,8 @@ const UserDetails = () => {
         axios.get('/api/users/' + id).then((response) => {
         setUser(response.data);
         });
-    }, [id]);
-    useEffect(() => {
         axios.get('/api/recipes/user/' + id).then((response) => {
-        setRecipes(response.data);
+            setRecipes(response.data);
         });
     }, [id]);
 
@@ -22,13 +20,13 @@ const UserDetails = () => {
         <div className="user-details">
             {!user && <div>Loading...</div>}
             {user &&
-            <div>
-                <div className="last-row">
-                    <h2>{user.username}</h2>
-                    <div>Datum kreiranja računa: {(user.creationDate)}</div>
-                </div>
-                <img src={"/../../" + user.pathToPicture} alt="Profile"></img>
-            </div> 
+                <div>
+                    <div className="last-row">
+                        <h2>{user.username}</h2>
+                        <div>Datum kreiranja računa: {(user.creationDate)}</div>
+                    </div>
+                    <img src={"/../../" + user.pathToPicture} alt="Profile"></img>
+                </div> 
             }
             <div>
                 {!recipes && <div>Učitavam...</div>}

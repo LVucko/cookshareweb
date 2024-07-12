@@ -28,12 +28,12 @@ const  Create = () => {
     }, []);
 
     const handleCheckboxChange = (event) => {
-    const checkedId = event.target.value;
-    if(event.target.checked){
-        setSelectedCategories([...selectedCategories,checkedId])
-    }else{
-        setSelectedCategories(selectedCategories.filter(id=>id !== checkedId))
-    }
+        const checkedId = event.target.value;
+        if(event.target.checked){
+            setSelectedCategories([...selectedCategories,checkedId])
+        }else{
+            setSelectedCategories(selectedCategories.filter(id=>id !== checkedId))
+        }
     
     }
 
