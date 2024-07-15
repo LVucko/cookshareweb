@@ -3,9 +3,9 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min";
 const NotFound = () => {
   return (
     <div className="not-found">
-      <h2>Sorry - 404</h2>
-      <p>That page cannot be found</p>
-      <Link to="/">Back to the homepage...</Link>
+      <h2>Greška - 404</h2>
+      <p>Stranica kojoj ste probali pristupiti ne postoji</p>
+      <Link to="/">Natrag na početnu...</Link>
     </div>
   );
 };

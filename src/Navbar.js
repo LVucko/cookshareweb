@@ -24,9 +24,12 @@ const Navbar = () => {
         {!userInfo && <Link to="/register">Registracija</Link>}
         {!userInfo && <Link to="/login">Prijava</Link>}
         {userInfo && (
-          <Link to="" onClick={logout}>
-            Odjava
-          </Link>
+          <>
+            <Link to={"/users/" + userInfo.userId}>Moj profil</Link>
+            <Link to="" onClick={logout}>
+              Odjava
+            </Link>
+          </>
         )}
       </div>
     </nav>

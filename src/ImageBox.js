@@ -1,14 +1,28 @@
-import { useEffect, useState } from "react";
-
-const ImageBox = ({ pictures }) => {
+import { useState } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
+const ImageBox = ({ pictures, fetchPictures }) => {
   const [currentPictureIndex, setCurrentPictureIndex] = useState(
     pictures.length - 1
   );
+  function handleDelete() {
+    var token = Cookies.get("JWT");
+    axios
+      .delete("/api/upload/" + pictures[currentPictureIndex].id, {
+        headers: { Authorization: "Bearer " + token },
+      })
+      .then((response) => {
+        fetchPictures();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
   return (
     <div className="image-box">
       <img
         className="background-image"
-        src={"/../../" + pictures[currentPictureIndex]}
+        src={"/../../" + pictures[currentPictureIndex].pathToPicture}
         alt="Recipe"
       ></img>
       <div className="buttons">
@@ -19,10 +33,12 @@ const ImageBox = ({ pictures }) => {
               setCurrentPictureIndex(currentPictureIndex - 1);
             }}
           >
-            {"<"}
+            {" < "}
           </button>
         )}
-        <button className="delete-button">delete</button>
+        <button className="delete-button" onClick={handleDelete}>
+          delete
+        </button>
         {currentPictureIndex < pictures.length - 1 && (
           <button
             className="left-right-button"
@@ -30,7 +46,7 @@ const ImageBox = ({ pictures }) => {
               setCurrentPictureIndex(currentPictureIndex + 1);
             }}
           >
-            {">"}
+            {" > "}
           </button>
         )}
       </div>

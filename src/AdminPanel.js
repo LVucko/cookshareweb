@@ -41,7 +41,6 @@ const AdminPanel = () => {
       })
       .then((response) => {
         setPictures(response.data);
-        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -117,10 +116,12 @@ const AdminPanel = () => {
       .get("/api/users/" + userId)
       .then((response) => {
         setUserError("");
+        var isodate = new Date(response.data.creationDate);
+        response.data.creationDate = isodate.toLocaleDateString("hr-HR");
         setUser(response.data);
       })
       .catch((error) => {
-        setUserError("unable to fetch user with that ID");
+        setUserError("Nepostoji korisnik s tim IDem");
         setUser(null);
         console.log(error);
       });
@@ -131,7 +132,7 @@ const AdminPanel = () => {
         <h1>ADMIN PANEL</h1>
         <div className="last-row"></div>
         <div className="admin-container">
-          <div className="first-column">
+          <div className="admin-row">
             <div className="user-information">
               <h3>ID korisnika:</h3>
               <input
@@ -145,40 +146,27 @@ const AdminPanel = () => {
               {user && (
                 <>
                   <h2>Username : {user.username}</h2>
-                  <h1>Set new user role:</h1>
+                  <img
+                    className="user-picture"
+                    src={"/../../" + user.pathToPicture}
+                    alt="Profile"
+                  ></img>
+                  <p>Napravljen: {user.creationDate}</p>
+
                   <div className="role-selector">
                     <div>
-                      <label>Promjeni rolu korisnika: </label>
+                      <label>Nova uloga korisnika:</label>
                       <select value={newRole} onChange={handleRoleChange}>
                         <option value="USER">USER</option>
                         <option value="MODERATOR">MODERATOR</option>
                         <option value="ADMIN">ADMIN</option>
                       </select>
+                      <button onClick={changeRole}>Promjeni</button>
                     </div>
-                    <button onClick={changeRole}>
-                      Promjeni rolu korisniku {user.username}
-                    </button>
-                  </div>
-                  <div className="comments-container">
-                    <h2>Svi komentari korisnika {user.username}</h2>
-                    {userComments && userComments.length !== 0 && (
-                      <CommentList
-                        comments={userComments}
-                        fetchComments={fetchComments}
-                      ></CommentList>
-                    )}
-                  </div>
-                  <div className="recipe-container">
-                    <h2>Svi korisnika {user.username}</h2>
-                    {recipes && recipes.length !== 0 && (
-                      <RecipeList recipes={recipes}></RecipeList>
-                    )}
                   </div>
                 </>
               )}
             </div>
-          </div>
-          <div className="second-column">
             <div className="category-manager">
               <h3>Dodaj novu kategoriju:</h3>
               <input
@@ -196,9 +184,32 @@ const AdminPanel = () => {
               )}
             </div>
             {pictures && (
-              <div>
-                <ImageBox pictures={pictures}></ImageBox>
+              <div className="image-manager">
+                <ImageBox
+                  pictures={pictures}
+                  fetchPictures={fetchPictures}
+                ></ImageBox>
               </div>
+            )}
+
+            {user && (
+              <>
+                {userComments && userComments.length !== 0 && (
+                  <div className="comments-container">
+                    <h2>Svi komentari korisnika {user.username}</h2>
+                    <CommentList
+                      comments={userComments}
+                      fetchComments={fetchComments}
+                    ></CommentList>
+                  </div>
+                )}
+                {recipes && recipes.length !== 0 && (
+                  <div className="recipe-container">
+                    <h2>Svi recepti korisnika {user.username}</h2>
+                    <RecipeList recipes={recipes}></RecipeList>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

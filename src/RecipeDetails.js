@@ -104,7 +104,7 @@ const RecipeDetails = () => {
             <h4>
               Autor: <a href={"/users/" + recipe.userId}>{recipe.username}</a>
             </h4>
-            <h4>Datum kreiranja recepta: {recipe.creationDate}</h4>
+            <h4>Objavljen: {recipe.creationDate}</h4>
           </div>
           <div className="row">
             <div></div>
