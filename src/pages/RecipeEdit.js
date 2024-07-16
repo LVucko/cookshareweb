@@ -1,7 +1,6 @@
-import UserContext from "./UserContext";
+import UserContext from "../contexts/UserContext";
 import { useState, useContext, useEffect } from "react";
-import { useParams } from "react-router-dom/cjs/react-router-dom";
-import { useHistory } from "react-router-dom/cjs/react-router-dom";
+import { useParams, useHistory } from "react-router-dom/cjs/react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 

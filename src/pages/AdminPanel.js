@@ -1,12 +1,12 @@
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import CommentList from "./CommentList";
-import RecipeList from "./RecipeList";
-import CategoryList from "./CategoryList";
+import CommentList from "../components/CommentList";
+import RecipeList from "../components/RecipeList";
+import CategoryList from "../components/CategoryList";
 import Cookies from "js-cookie";
-import UserContext from "./UserContext";
+import UserContext from "../contexts/UserContext";
 import NotFound from "./NotFound";
-import ImageBox from "./ImageBox";
+import ImageBox from "../components/ImageBox";
 const AdminPanel = () => {
   const { userInfo } = useContext(UserContext);
   const [userId, setId] = useState("");
