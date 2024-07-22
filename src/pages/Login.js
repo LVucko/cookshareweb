@@ -29,7 +29,6 @@ const Login = () => {
           userId: decodeToken(Cookies.get("JWT")).UserId,
           role: decodeToken(Cookies.get("JWT")).Role,
         });
-        setIsProcessing(false);
         history.goBack();
       })
       .catch((error) => {
@@ -39,8 +38,10 @@ const Login = () => {
         if (error.response.status === 401) {
           setLoginError("Pogrešna zaporka");
         }
-        setIsProcessing(false);
         console.log(error);
+      })
+      .finally(() => {
+        setIsProcessing(false);
       });
   };
   if (!userInfo)

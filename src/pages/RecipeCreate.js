@@ -7,14 +7,16 @@ import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
 import { useEffect } from "react";
 
-const Create = () => {
+const RecipeCreate = () => {
   const { userInfo } = useContext(UserContext);
-  const [title, setTitle] = useState("");
-  const [shortDescription, setShortDescription] = useState("");
-  const [longDescription, setLongDescription] = useState("");
+  const [recipe, setRecipe] = useState({
+    title: "",
+    shortDescription: "",
+    longDescription: "",
+    categories: [],
+    pictureIds: [0],
+  });
   const [allCategories, setAllCategories] = useState();
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [pictureIds, setPictureIds] = useState(["0"]);
   const [file, setFile] = useState("");
   const [isProcesing, setIsProcessing] = useState(false);
   const history = useHistory();
@@ -33,18 +35,24 @@ const Create = () => {
   const handleCheckboxChange = (event) => {
     const checkedId = event.target.value;
     if (event.target.checked) {
-      setSelectedCategories([...selectedCategories, checkedId]);
+      setRecipe({
+        ...recipe,
+        categories: [...recipe.categories, checkedId],
+      });
     } else {
-      setSelectedCategories(
-        selectedCategories.filter((id) => id !== checkedId)
-      );
+      setRecipe({
+        ...recipe,
+        categories: recipe.categories.filter((id) => id !== checkedId),
+      });
     }
   };
 
   function handlePictureChange(e) {
     setIsProcessing(true);
     if (e.target.files[0] === undefined) {
+      setRecipe({ ...recipe, pictureIds: [0] });
       setFile(undefined);
+      setIsProcessing(false);
       return;
     }
     setFile(URL.createObjectURL(e.target.files[0]));
@@ -57,7 +65,7 @@ const Create = () => {
       })
       .then((response) => {
         setIsProcessing(false);
-        setPictureIds([response.data]);
+        setRecipe({ ...recipe, pictureIds: [response.data] });
       })
       .catch((error) => {
         setIsProcessing(false);
@@ -70,24 +78,17 @@ const Create = () => {
     setIsProcessing(true);
     var token = Cookies.get("JWT");
     axios
-      .post(
-        "/api/recipes",
-        {
-          title: title,
-          shortDescription: shortDescription,
-          longDescription: longDescription,
-          categories: selectedCategories,
-          pictureIds: pictureIds,
-        },
-        { headers: { Authorization: "Bearer " + token } }
-      )
+      .post("/api/recipes", recipe, {
+        headers: { Authorization: "Bearer " + token },
+      })
       .then((response) => {
-        setIsProcessing(false);
         history.push("/recipes/" + response.data);
       })
       .catch((error) => {
-        setIsProcessing(false);
         console.log(error);
+      })
+      .finally(() => {
+        setIsProcessing(false);
       });
   };
   if (userInfo)
@@ -102,23 +103,27 @@ const Create = () => {
           <input
             type="text"
             required
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={recipe.title}
+            onChange={(e) => setRecipe({ ...recipe, title: e.target.value })}
           ></input>
           <label>Kratki opis:</label>
           <input
             type="text"
             required
-            value={shortDescription}
-            onChange={(e) => setShortDescription(e.target.value)}
+            value={recipe.shortDescription}
+            onChange={(e) =>
+              setRecipe({ ...recipe, shortDescription: e.target.value })
+            }
           ></input>
-          <label>Postupak</label>
+          <label>Postupak:</label>
           <textarea
             required
-            value={longDescription}
-            onChange={(e) => setLongDescription(e.target.value)}
+            value={recipe.longDescription}
+            onChange={(e) =>
+              setRecipe({ ...recipe, longDescription: e.target.value })
+            }
           ></textarea>
-          <label>Kategorije (barem jedna):</label>
+          <label>Kategorije:</label>
           {allCategories &&
             allCategories.map((category) => (
               <div className="categories" key={category.name}>
@@ -170,4 +175,4 @@ const Create = () => {
     );
 };
 
-export default Create;
+export default RecipeCreate;

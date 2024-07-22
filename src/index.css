@@ -105,6 +105,19 @@
   height: 80%
 }
 
+.recipe-preview button {
+  background: hsl(342, 87%, 58%);
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  margin:1px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.recipe-preview button:hover{
+  background: hsl(342, 87%, 30%);
+}
+
 
 .text-container-header{
   display: flex;
@@ -283,6 +296,10 @@
 }
 
 /* user details */
+.user-details{
+  max-width: 1000px;
+  margin:auto;
+}
 .user-picture{
   text-align: center;
   margin:auto;
@@ -290,6 +307,17 @@
   width: 75px;
   border-radius: 50%;
   border: 1px solid #f1356d;
+}
+.user-details button{
+  background: hsl(342, 87%, 58%);
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.user-details button:hover{
+  background: hsl(342, 87%, 30%);
 }
 
 /* recipe rating */
@@ -475,12 +503,10 @@ input[type=file]::file-selector-button:hover {
   overflow: auto;
 }
 .category-manager{
-  border: 1px solid #333;
   padding: 2px;
   max-height: 500px;
 }
 .image-manager{
-  border: 1px solid #333;
   padding: 2px;
   max-height: 500px;
 }
@@ -528,5 +554,5 @@ input[type=file]::file-selector-button:hover {
 }
 .delete-button{
   margin:auto;
-  margin-bottom: 0;
+  margin-top: 2px;
 }

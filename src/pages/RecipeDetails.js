@@ -7,6 +7,7 @@ import UserContext from "../contexts/UserContext";
 import RecipeRating from "../components/RecipeRating";
 import NewComment from "../components/NewComment";
 import StarRating from "../components/StarRating";
+import Loading from "../components/Loading";
 
 const RecipeDetails = () => {
   const { userInfo } = useContext(UserContext);
@@ -70,7 +71,7 @@ const RecipeDetails = () => {
   }
   return (
     <div className="recipe-details">
-      {!recipe && <div>Loading...</div>}
+      {!recipe && <Loading></Loading>}
       {recipe && (
         <article>
           <div className="row">
@@ -145,7 +146,7 @@ const RecipeDetails = () => {
         <NewComment id={id} fetchComments={fetchComments}></NewComment>
       )}
       <h2>Komentari:</h2>
-      {!comments && <div>Učitavam komentare</div>}
+      {!comments && <Loading></Loading>}
       {comments && (
         <CommentList
           comments={comments}

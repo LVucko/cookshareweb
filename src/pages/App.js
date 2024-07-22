@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { decodeToken } from "react-jwt";
 import Navbar from "./Navbar";
 import Home from "./Home";
-import Create from "./Create";
+import RecipeCreate from "./RecipeCreate";
 import RecipeDetails from "./RecipeDetails";
 import NotFound from "./NotFound";
 import Register from "./Register";
@@ -13,6 +13,7 @@ import UserDetails from "./UserDetails";
 import UserContext from "../contexts/UserContext";
 import RecipeEdit from "./RecipeEdit";
 import AdminPanel from "./AdminPanel";
+import UserEdit from "./UserEdit";
 
 function App() {
   const [userInfo, setUserInfo] = useState(null);
@@ -51,7 +52,7 @@ function App() {
                 <Login />
               </Route>
               <Route exact path="/create">
-                <Create />
+                <RecipeCreate />
               </Route>
               <Route path="/recipes/:id">
                 <RecipeDetails />
@@ -61,6 +62,9 @@ function App() {
               </Route>
               <Route path="/edit/:id">
                 <RecipeEdit />
+              </Route>
+              <Route path="/customize/:id">
+                <UserEdit />
               </Route>
               <Route path="/admin">
                 <AdminPanel />

@@ -2,6 +2,12 @@ import { Link, useHistory } from "react-router-dom/cjs/react-router-dom";
 import { useState, useContext } from "react";
 import axios from "axios";
 import UserContext from "../contexts/UserContext";
+import {
+  validateEmail,
+  validatePassword,
+  validateUsername,
+} from "../utils/registrationValidator";
+
 const Register = () => {
   const { userInfo } = useContext(UserContext);
   const history = useHistory();
@@ -49,48 +55,17 @@ const Register = () => {
 
   const onUsernameChange = (e) => {
     setUser({ ...user, username: e });
-    if (e === null || e.length === 0) {
-      setError({ ...error, username: "Molimo unesite korisničko ime" });
-    } else if (e.length < 6) {
-      setError({
-        ...error,
-        username: "Korisničko ime mora biti barem 6 znakova",
-      });
-    } else if (e.match(/^[A-Za-z]\w{5,29}$/)) {
-      setError({ ...error, username: null });
-    } else {
-      setError({
-        ...error,
-        username:
-          "Korisničko ime mora počinjati slovom, a može sadržavati brojeve i znak _",
-      });
-    }
+    setError({ ...error, username: validateUsername(e) });
   };
 
   const onEmailChange = (e) => {
     setUser({ ...user, email: e });
-    if (e.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6}$/i)) {
-      setError({ ...error, email: null });
-    } else {
-      setError({ ...error, email: "Molimo unesite ispravan e-mail" });
-    }
+    setError({ ...error, email: validateEmail(e) });
   };
 
   const onPasswordChange = (e) => {
     setUser({ ...user, password: e });
-    if (
-      e.match(
-        /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\S+$).{8,20}$/
-      )
-    ) {
-      setError({ ...error, password: null });
-    } else {
-      setError({
-        ...error,
-        password:
-          "Lozinka mora sadržavati 8-20 znakova, broj, veliko i malo slovo, i poseban znak",
-      });
-    }
+    setError({ ...error, password: validatePassword(e) });
   };
 
   const onRepeatPasswordChange = (e) => {
@@ -108,8 +83,8 @@ const Register = () => {
       .post("/api/users/register", user, {
         headers: { "Content-Type": "application/json" },
       })
-      .then((response) => {
-        if (response.status === 200) history.push("/");
+      .then(() => {
+        history.push("/");
       })
       .catch((error) => {
         console.log(error);

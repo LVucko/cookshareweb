@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import UserContext from "../contexts/UserContext";
 import NotFound from "./NotFound";
 import ImageBox from "../components/ImageBox";
+import { isoDateToLocale } from "../utils/utilities";
 const AdminPanel = () => {
   const { userInfo } = useContext(UserContext);
   const [userId, setId] = useState("");
@@ -91,8 +92,11 @@ const AdminPanel = () => {
       });
   }
   function fetchComments() {
+    var token = Cookies.get("JWT");
     axios
-      .get("/api/users/" + userId + "/comments")
+      .get("/api/users/" + userId + "/comments", {
+        headers: { Authorization: "Bearer " + token },
+      })
       .then((response) => {
         setUserComments(response.data);
       })
@@ -111,13 +115,17 @@ const AdminPanel = () => {
       });
   }
   function getUserById() {
-    if (!userId) return;
+    if (!userId) {
+      setUserError("ID ne može biti prazan");
+      return;
+    }
     axios
       .get("/api/users/" + userId)
       .then((response) => {
         setUserError("");
-        var isodate = new Date(response.data.creationDate);
-        response.data.creationDate = isodate.toLocaleDateString("hr-HR");
+        response.data.creationDate = isoDateToLocale(
+          response.data.creationDate
+        );
         setUser(response.data);
       })
       .catch((error) => {
@@ -167,6 +175,15 @@ const AdminPanel = () => {
                 </>
               )}
             </div>
+
+            {pictures && (
+              <div className="image-manager">
+                <ImageBox
+                  pictures={pictures}
+                  fetchPictures={fetchPictures}
+                ></ImageBox>
+              </div>
+            )}
             <div className="category-manager">
               <h3>Dodaj novu kategoriju:</h3>
               <input
@@ -183,15 +200,6 @@ const AdminPanel = () => {
                 ></CategoryList>
               )}
             </div>
-            {pictures && (
-              <div className="image-manager">
-                <ImageBox
-                  pictures={pictures}
-                  fetchPictures={fetchPictures}
-                ></ImageBox>
-              </div>
-            )}
-
             {user && (
               <>
                 {userComments && userComments.length !== 0 && (

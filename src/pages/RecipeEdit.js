@@ -3,40 +3,46 @@ import { useState, useContext, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom/cjs/react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
+import NotFound from "./NotFound";
 
 const RecipeEdit = () => {
   const { userInfo } = useContext(UserContext);
-  const [title, setTitle] = useState("");
-  const [shortDescription, setShortDescription] = useState("");
-  const [longDescription, setLongDescription] = useState("");
-  const [allCategories, setAllCategories] = useState(null);
-  const [selectedCategories, setSelectedCategories] = useState(null);
-  const [pictureIds, setPictureIds] = useState([]);
+  const { id } = useParams();
+  const history = useHistory();
   const [file, setFile] = useState("");
   const [isProcesing, setIsProcessing] = useState(false);
-  const history = useHistory();
-  const { id } = useParams();
-  const [recipeCategories, setRecipeCategories] = useState(null);
+  const [recipe, setRecipe] = useState({
+    id: id,
+    userId: "",
+    title: "",
+    shortDescription: "",
+    longDescription: "",
+    categories: "",
+    pictureIds: [],
+  });
+  const [allCategories, setAllCategories] = useState(null);
 
   useEffect(() => {
     axios
-      .get("/api/categories")
-      .then((response) => {
-        console.log(response.data);
-        setAllCategories(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    axios
       .get("/api/recipes/" + id)
       .then((response) => {
-        setTitle(response.data.title);
-        setRecipeCategories(response.data.categories);
-        setShortDescription(response.data.shortDescription);
-        setLongDescription(response.data.longDescription);
+        setRecipe({
+          ...recipe,
+          userId: response.data.userId,
+          title: response.data.title,
+          categories: response.data.categories,
+          shortDescription: response.data.shortDescription,
+          longDescription: response.data.longDescription,
+        });
         setFile("/../../" + response.data.pathToPictures[0]);
-        console.log(response.data);
+        axios
+          .get("/api/categories")
+          .then((response) => {
+            setAllCategories(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -44,26 +50,32 @@ const RecipeEdit = () => {
   }, []);
 
   useEffect(() => {
-    if (allCategories && recipeCategories) {
+    if (allCategories && recipe) {
       var checkedCategories = [];
       allCategories.forEach((category) => {
-        if (recipeCategories.includes(category.name)) {
+        if (recipe.categories.includes(category.name)) {
           checkedCategories.push(category.id.toString());
         }
       });
-      setSelectedCategories(checkedCategories);
+      setRecipe({
+        ...recipe,
+        categories: checkedCategories,
+      });
     }
-  }, [allCategories, recipeCategories]);
+  }, [allCategories]);
 
   const handleCheckboxChange = (event) => {
-    console.log(selectedCategories);
     const checkedId = event.target.value;
     if (event.target.checked) {
-      setSelectedCategories([...selectedCategories, checkedId]);
+      setRecipe({
+        ...recipe,
+        categories: [...recipe.categories, checkedId],
+      });
     } else {
-      setSelectedCategories(
-        selectedCategories.filter((id) => id !== checkedId)
-      );
+      setRecipe({
+        ...recipe,
+        categories: recipe.categories.filter((id) => id !== checkedId),
+      });
     }
   };
 
@@ -83,7 +95,8 @@ const RecipeEdit = () => {
       })
       .then((response) => {
         setIsProcessing(false);
-        setPictureIds([response.data]);
+        console.log(response.data);
+        setRecipe({ ...recipe, pictureIds: [response.data] });
       })
       .catch((error) => {
         setIsProcessing(false);
@@ -95,33 +108,27 @@ const RecipeEdit = () => {
     e.preventDefault();
     setIsProcessing(true);
     var token = Cookies.get("JWT");
-    if (token === null) {
-      return;
-      //ako istekne token ili nesta
-    }
     axios
-      .put(
-        "/api/recipes",
-        {
-          id: id,
-          title: title,
-          shortDescription: shortDescription,
-          longDescription: longDescription,
-          categories: selectedCategories,
-          pictureIds: pictureIds,
-        },
-        { headers: { Authorization: "Bearer " + token } }
-      )
+      .put("/api/recipes", recipe, {
+        headers: { Authorization: "Bearer " + token },
+      })
       .then((response) => {
-        setIsProcessing(false);
         history.push("/recipes/" + id);
       })
       .catch((error) => {
-        setIsProcessing(false);
         console.log(error);
+      })
+      .finally((error) => {
+        setIsProcessing(false);
       });
   };
-  if (userInfo)
+  if (
+    userInfo &&
+    recipe &&
+    (userInfo.userId === recipe.userId ||
+      userInfo.role === "MODERATOR" ||
+      userInfo.role === "ADMIN")
+  )
     return (
       <div className="register">
         <h2>Izmjena recepta: </h2>
@@ -133,31 +140,35 @@ const RecipeEdit = () => {
           <input
             type="text"
             required
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={recipe.title}
+            onChange={(e) => setRecipe({ ...recipe, title: e.target.value })}
           ></input>
           <label>Kratki opis:</label>
           <input
             type="text"
             required
-            value={shortDescription}
-            onChange={(e) => setShortDescription(e.target.value)}
+            value={recipe.shortDescription}
+            onChange={(e) =>
+              setRecipe({ ...recipe, shortDescription: e.target.value })
+            }
           ></input>
           <label>Postupak</label>
           <textarea
             required
-            value={longDescription}
-            onChange={(e) => setLongDescription(e.target.value)}
+            value={recipe.longDescription}
+            onChange={(e) =>
+              setRecipe({ ...recipe, longDescription: e.target.value })
+            }
           ></textarea>
           <label>Kategorije (barem jedna):</label>
-          {recipeCategories &&
+          {recipe &&
             allCategories &&
             allCategories.map((category) => (
               <div className="categories" key={category.name}>
                 <label htmlFor={category.name}>
                   <input
                     type="checkbox"
-                    defaultChecked={recipeCategories.includes(category.name)}
+                    defaultChecked={recipe.categories.includes(category.name)}
                     id={category.id}
                     name={category.name}
                     value={category.id}
@@ -187,7 +198,7 @@ const RecipeEdit = () => {
         </form>
       </div>
     );
-  else return <div className="register"></div>;
+  else return <NotFound></NotFound>;
 };
 
 export default RecipeEdit;

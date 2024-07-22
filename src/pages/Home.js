@@ -2,6 +2,7 @@ import RecipeList from "../components/RecipeList";
 import RecipeSelector from "../components/RecipeSelector";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Loading from "../components/Loading";
 
 const Home = () => {
   const [recipes, setRecipes] = useState(null);
@@ -41,12 +42,10 @@ const Home = () => {
           setCategory(data);
         }}
       ></RecipeSelector>
-      {!recipes && (
-        <div className="tight-row">
-          <img className="row" alt="loading" src={"loading.gif"}></img>
-        </div>
+      {!recipes && <Loading></Loading>}
+      {recipes && (
+        <RecipeList recipes={recipes} fetchRecipes={fetchRecipes}></RecipeList>
       )}
-      {recipes && <RecipeList recipes={recipes}></RecipeList>}
     </div>
   );
 };

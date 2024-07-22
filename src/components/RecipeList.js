@@ -1,7 +1,25 @@
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import StarRating from "./StarRating";
+import { useContext } from "react";
+import UserContext from "../contexts/UserContext";
+import axios from "axios";
+import Cookies from "js-cookie";
 
-const RecipeList = ({ recipes }) => {
+const RecipeList = ({ recipes, fetchRecipes }) => {
+  const { userInfo } = useContext(UserContext);
+  function handleDelete(id) {
+    var token = Cookies.get("JWT");
+    axios
+      .delete("/api/recipes/" + id, {
+        headers: { Authorization: "Bearer " + token },
+      })
+      .then(() => {
+        fetchRecipes();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
   return (
     <div className="recipe-list">
       {recipes.map((recipe) => (
@@ -14,7 +32,18 @@ const RecipeList = ({ recipes }) => {
           }}
         >
           <div className="row">
-            <div></div>
+            {userInfo &&
+              (userInfo.role === "MODERATOR" || userInfo.role === "ADMIN") && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleDelete(recipe.id);
+                  }}
+                >
+                  Obriši
+                </button>
+              )}
+            {(!userInfo || userInfo.role === "USER") && <div></div>}
             <StarRating rating={recipe.averageRating}></StarRating>
           </div>
           <div className="text-container">
