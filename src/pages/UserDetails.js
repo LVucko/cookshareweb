@@ -11,6 +11,7 @@ const UserDetails = () => {
   const { id } = useParams();
   const [user, setUser] = useState(null);
   const [recipes, setRecipes] = useState(null);
+  const [favouriteRecipes, setFavouriteRecipes] = useState(null);
   const history = useHistory();
   useEffect(() => {
     axios
@@ -28,6 +29,14 @@ const UserDetails = () => {
       .get("/api/recipes/user/" + id)
       .then((response) => {
         setRecipes(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    axios
+      .get("/api/recipes/user/" + id + "/favourites")
+      .then((response) => {
+        setFavouriteRecipes(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -85,6 +94,15 @@ const UserDetails = () => {
           <>
             <h2>Svi recepti korisnika {user.username}</h2>
             <RecipeList recipes={recipes}></RecipeList>
+          </>
+        )}
+      </div>
+      <div>
+        {!favouriteRecipes && <Loading></Loading>}
+        {favouriteRecipes && user && (
+          <>
+            <h2>Omiljeni recepti korisnika {user.username}</h2>
+            <RecipeList recipes={favouriteRecipes}></RecipeList>
           </>
         )}
       </div>

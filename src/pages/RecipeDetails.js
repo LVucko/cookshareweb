@@ -8,16 +8,19 @@ import RecipeRating from "../components/RecipeRating";
 import NewComment from "../components/NewComment";
 import StarRating from "../components/StarRating";
 import Loading from "../components/Loading";
+import FavouriteButton from "../components/FavouriteButton";
 
 const RecipeDetails = () => {
   const { userInfo } = useContext(UserContext);
   const [recipe, setRecipe] = useState("");
   const [comments, setComments] = useState("");
+  const [isFavourite, setIsFavorite] = useState(false);
   const { id } = useParams();
   const history = useHistory();
   useEffect(() => {
     fetchRecipe();
     fetchComments();
+    fetchIsFavourite();
   }, []);
 
   const fetchRecipe = () => {
@@ -42,7 +45,19 @@ const RecipeDetails = () => {
         console.log(error);
       });
   };
-
+  const fetchIsFavourite = () => {
+    var token = Cookies.get("JWT");
+    axios
+      .get("/api/recipes/" + id + "/favourite", {
+        headers: { Authorization: "Bearer " + token },
+      })
+      .then((response) => {
+        setIsFavorite(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   const fetchComments = () => {
     axios
       .get("/api/recipes/" + id + "/comments")
@@ -66,9 +81,45 @@ const RecipeDetails = () => {
         console.log(error);
       });
   }
+
   function handleEdit() {
     history.push("/edit/" + id);
   }
+
+  function handleFavourite() {
+    var token = Cookies.get("JWT");
+    if (!isFavourite) {
+      console.log("nije favorit");
+      axios
+        .post(
+          "/api/recipes/" + id + "/favourite",
+          {},
+          {
+            headers: { Authorization: "Bearer " + token },
+          }
+        )
+        .then(() => {
+          setIsFavorite(!isFavourite);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else if (isFavourite) {
+      if (isFavourite) {
+        axios
+          .delete("/api/recipes/" + id + "/favourite", {
+            headers: { Authorization: "Bearer " + token },
+          })
+          .then(() => {
+            setIsFavorite(!isFavourite);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    }
+  }
+
   return (
     <div className="recipe-details">
       {!recipe && <Loading></Loading>}
@@ -105,7 +156,16 @@ const RecipeDetails = () => {
             <h4>
               Autor: <a href={"/users/" + recipe.userId}>{recipe.username}</a>
             </h4>
-            <h4>Objavljen: {recipe.creationDate}</h4>
+            <div className="tight-row">
+              <h4>Objavljen: {recipe.creationDate}</h4>
+              {userInfo && (
+                <FavouriteButton
+                  id={id}
+                  numberOfFavourites={recipe.numberOfFavourites}
+                  fetchRecipe={fetchRecipe}
+                ></FavouriteButton>
+              )}
+            </div>
           </div>
           <div className="row">
             <div></div>

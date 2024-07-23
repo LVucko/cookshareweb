@@ -556,3 +556,25 @@ input[type=file]::file-selector-button:hover {
   margin:auto;
   margin-top: 2px;
 }
+
+#unfavourite{
+  background: #861b3b;
+  padding:5px;
+  margin: 1px;
+}
+#unfavourite:hover{
+  background: #f1356d;
+  padding:5px;
+  margin: 1px;
+}
+
+#favourite{
+  background: #f1356d;
+  padding:5px;
+  margin: 1px;
+}
+#favourite:hover{
+  background: #861b3b;
+  padding:5px;
+  margin: 1px;
+}

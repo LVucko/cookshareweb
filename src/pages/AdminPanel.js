@@ -8,6 +8,7 @@ import UserContext from "../contexts/UserContext";
 import NotFound from "./NotFound";
 import ImageBox from "../components/ImageBox";
 import { isoDateToLocale } from "../utils/utilities";
+import { useHistory } from "react-router-dom/cjs/react-router-dom";
 const AdminPanel = () => {
   const { userInfo } = useContext(UserContext);
   const [userId, setId] = useState("");
@@ -19,7 +20,7 @@ const AdminPanel = () => {
   const [newCategory, setNewCategory] = useState("");
   const [newRole, setNewRole] = useState("USER");
   const [pictures, setPictures] = useState();
-
+  const history = useHistory();
   useEffect(() => {
     fetchCategories();
     fetchPictures();
@@ -119,9 +120,13 @@ const AdminPanel = () => {
       setUserError("ID ne može biti prazan");
       return;
     }
+    var token = Cookies.get("JWT");
     axios
-      .get("/api/users/" + userId)
+      .get("/api/users/personal/" + userId, {
+        headers: { Authorization: "Bearer " + token },
+      })
       .then((response) => {
+        console.log(response.data);
         setUserError("");
         response.data.creationDate = isoDateToLocale(
           response.data.creationDate
@@ -160,7 +165,16 @@ const AdminPanel = () => {
                     alt="Profile"
                   ></img>
                   <p>Napravljen: {user.creationDate}</p>
-
+                  <p>Email: {user.email}</p>
+                  <p>Ime: {user.realName}</p>
+                  <p>Telefon: {user.phone}</p>
+                  <button
+                    onClick={() => {
+                      history.push("/customize/" + user.id);
+                    }}
+                  >
+                    Uredi profil korisnika
+                  </button>
                   <div className="role-selector">
                     <div>
                       <label>Nova uloga korisnika:</label>
