@@ -7,11 +7,13 @@ import {
   validatePassword,
   validateUsername,
 } from "../utils/registrationValidator";
+import PictureUpload from "../components/PictureUpload";
+import LoggedIn from "../components/LoggedIn";
 
 const Register = () => {
   const { userInfo } = useContext(UserContext);
   const history = useHistory();
-  const [file, setFile] = useState("");
+  const [isProcesing, setIsProcessing] = useState(false);
   const [user, setUser] = useState({
     username: "",
     email: "",
@@ -19,7 +21,7 @@ const Register = () => {
     phone: "",
     password: "",
     repeatPassword: "",
-    pictureId: "0",
+    pictureId: "1",
   });
   const [error, setError] = useState({
     username: "",
@@ -30,28 +32,6 @@ const Register = () => {
     repeatPassword: "",
     pictureId: "",
   });
-
-  function handlePictureChange(e) {
-    if (e.target.files[0] === undefined) {
-      setFile(undefined);
-      return;
-    }
-    setFile(URL.createObjectURL(e.target.files[0]));
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    axios
-      .post("api/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((response) => {
-        setUser({ ...user, pictureId: response.data });
-      })
-      .catch((error) => {
-        setUser({ ...user, pictureId: 0 });
-        console.log(error);
-      });
-  }
 
   const onUsernameChange = (e) => {
     setUser({ ...user, username: e });
@@ -65,7 +45,19 @@ const Register = () => {
 
   const onPasswordChange = (e) => {
     setUser({ ...user, password: e });
-    setError({ ...error, password: validatePassword(e) });
+    if (e === user.repeatPassword) {
+      setError({
+        ...error,
+        password: validatePassword(e),
+        repeatPassword: null,
+      });
+    } else {
+      setError({
+        ...error,
+        password: validatePassword(e),
+        repeatPassword: "Lozinke se ne podudaraju",
+      });
+    }
   };
 
   const onRepeatPasswordChange = (e) => {
@@ -87,6 +79,12 @@ const Register = () => {
         history.push("/");
       })
       .catch((error) => {
+        if (error.response.data.message === "Username taken") {
+          setError({ ...error, username: "Korisničko ime je već zauzeto" });
+        }
+        if (error.response.data.message === "Email taken") {
+          setError({ ...error, email: "E-mail je već u upotrebi" });
+        }
         console.log(error);
       });
   };
@@ -110,7 +108,7 @@ const Register = () => {
             onChange={(e) => onUsernameChange(e.target.value)}
             onBlur={(e) => onUsernameChange(e.target.value)}
           ></input>
-          {error.username && <p>{error.username}</p>}
+          <p>{error.username}</p>
           <label>
             Adresa e-pošte: <span style={{ color: "red" }}>*</span>
           </label>
@@ -121,7 +119,7 @@ const Register = () => {
             onChange={(e) => onEmailChange(e.target.value)}
             onBlur={(e) => onEmailChange(e.target.value)}
           ></input>
-          {error.email && <p>{error.email}</p>}
+          <p>{error.email}</p>
           <label>Ime i Prezime: </label>
           <input
             type="name"
@@ -144,7 +142,7 @@ const Register = () => {
             onChange={(e) => onPasswordChange(e.target.value)}
             onBlur={(e) => onPasswordChange(e.target.value)}
           ></input>
-          {error.password && <p>{error.password}</p>}
+          <p>{error.password}</p>
           <label>
             Ponovi lozinku: <span style={{ color: "red" }}>*</span>
           </label>
@@ -155,16 +153,14 @@ const Register = () => {
             onChange={(e) => onRepeatPasswordChange(e.target.value)}
             onBlur={(e) => onRepeatPasswordChange(e.target.value)}
           ></input>
-          {error.repeatPassword && <p>{error.repeatPassword}</p>}
-          <div className="Image">
-            <label>Slika profila:</label>
-            <input
-              type="file"
-              onChange={handlePictureChange}
-              accept="image/*"
-            />
-            {file && <img src={file} alt="Uploaded" />}
-          </div>
+          <p>{error.repeatPassword}</p>
+          <PictureUpload
+            setId={(e) => {
+              setUser({ ...user, pictureId: e });
+            }}
+            setIsProcessing={(e) => setIsProcessing(e)}
+            defaultPictureId={1}
+          ></PictureUpload>
           <label>
             Polja označena sa <span style={{ color: "red" }}>*</span> su
             obavezna
@@ -172,39 +168,25 @@ const Register = () => {
           <p>
             <br></br>
           </p>
-          {(error.username ||
-            error.email ||
-            error.password ||
-            error.repeatPassword ||
-            !user.username ||
-            !user.email ||
-            !user.password ||
-            !user.repeatPassword) && (
+          {!isProcesing &&
+          !error.username &&
+          !error.email &&
+          !error.password &&
+          !error.repeatPassword &&
+          user.username &&
+          user.email &&
+          user.password &&
+          user.repeatPassword ? (
+            <button>Registiraj se</button>
+          ) : (
             <button id="disabledButton" disabled={true}>
               Registiraj se
             </button>
           )}
-          {!error.username &&
-            !error.email &&
-            !error.password &&
-            !error.repeatPassword &&
-            user.username &&
-            user.email &&
-            user.password &&
-            user.repeatPassword && <button>Registiraj se</button>}
         </form>
       </div>
     );
-  else
-    return (
-      <div className="register">
-        <h2>Već ste prijavljeni</h2>
-        <p>
-          <br></br>
-        </p>
-        <Link to="/">Početna stranica</Link>
-      </div>
-    );
+  else return <LoggedIn />;
 };
 
 export default Register;

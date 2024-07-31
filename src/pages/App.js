@@ -14,7 +14,7 @@ import UserContext from "../contexts/UserContext";
 import RecipeEdit from "./RecipeEdit";
 import AdminPanel from "./AdminPanel";
 import UserEdit from "./UserEdit";
-
+import ToastMessage from "../components/ToastMessage";
 function App() {
   const [userInfo, setUserInfo] = useState(null);
   const login = (userData) => {
@@ -41,6 +41,7 @@ function App() {
         <div className="App">
           <Navbar />
           <div className="content">
+            <ToastMessage />
             <Switch>
               <Route exact path="/">
                 <Home />

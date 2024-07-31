@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
-import Cookies from "js-cookie";
+import { getJWT } from "../utils/utilities";
 import axios from "axios";
 
 const CommentList = ({ comments, fetchComments }) => {
@@ -11,7 +11,7 @@ const CommentList = ({ comments, fetchComments }) => {
     return isodate.toLocaleString("Hr-hr");
   };
   function handleDelete(id) {
-    var token = Cookies.get("JWT");
+    var token = getJWT();
     axios
       .delete("/api/recipes/comment/" + id, {
         headers: { Authorization: "Bearer " + token },

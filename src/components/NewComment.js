@@ -1,24 +1,26 @@
-import { useState, useEffect } from "react";
-import Cookies from "js-cookie";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
-
+import { getJWT } from "../utils/utilities";
+import UserContext from "../contexts/UserContext";
 function NewComment({ id, fetchComments }) {
+  const userInfo = useContext(UserContext);
   const [newComment, setNewComment] = useState("");
   const [placeholder, setPlaceholder] = useState("");
   const [isPending, setIsPending] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   useEffect(() => {
-    if (Cookies.get("JWT")) {
+    if (userInfo.userId !== undefined) {
+      console.log(userInfo.userId);
       setIsDisabled(false);
       setPlaceholder("Unesite svoj komentar");
     } else setPlaceholder("Prijavite se kako bi ste mogli komentirati");
-  }, []);
+  }, [userInfo]);
 
   function handleComment(e) {
     e.preventDefault();
     const comment = { recipeId: id, comment: newComment };
     setIsPending(true);
-    var token = Cookies.get("JWT");
+    var token = getJWT();
     axios
       .post("/api/recipes/" + id + "/comments", comment, {
         headers: { Authorization: "Bearer " + token },

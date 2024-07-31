@@ -7,6 +7,7 @@
  }
 
  .navbar {
+  display:block;
   z-index: 99;
   position: sticky;
   top: 0;
@@ -34,6 +35,47 @@
 .navbar a:hover {
   color: #f1356d;
 }
+
+.navbar-mobile {
+  display:none ;
+  z-index: 99;
+  position: sticky;
+  top: 0;
+  padding: 10px;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  border-bottom: 1px solid #f2f2f2;
+  background-color: #fff;
+}
+.navbar-mobile h1 {
+  color: #f1356d;
+  font-size: 35px;
+}
+.navbar-mobile .links {
+  display:block;
+  margin-left: auto;
+}
+.navbar-mobile a {
+  text-align: center;
+  display:block;
+  font-size: 20px;
+  margin-left: 16px;
+  text-decoration: none;
+  padding: 6px;
+}
+.navbar-mobile a:hover {
+  color: #f1356d;
+}
+@media screen and (max-width: 830px) {
+  .navbar{
+    display: none ;
+  }
+  .navbar-mobile{
+    display: block ;
+  }
+}
+
 .content {
   max-width: 1400px;
   margin: 0px auto;
@@ -45,7 +87,7 @@
 
 /* recipe previews / list */
 .recipe-list {
-  display:flex;
+  display: flex;
   align-items: center;
   flex-direction: row;
   justify-content: center;
@@ -69,6 +111,7 @@
   background-size: cover;
   background-position: 50% 50%;
   position: relative;
+  flex-grow: 1;
 }
 
 .recipe-preview h2 {
@@ -303,6 +346,7 @@
 .user-picture{
   text-align: center;
   margin:auto;
+  margin-right: 10px;
   height: 75px;
   width: 75px;
   border-radius: 50%;
@@ -312,7 +356,8 @@
   background: hsl(342, 87%, 58%);
   color: #fff;
   border: 0;
-  padding: 8px;
+  padding: 5px;
+  margin: 2px;
   border-radius: 8px;
   cursor: pointer;
 }

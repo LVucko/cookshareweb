@@ -1,7 +1,7 @@
 import { useParams, useHistory } from "react-router-dom/cjs/react-router-dom";
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
-import Cookies from "js-cookie";
+import { getJWT, isoDateToLocale } from "../utils/utilities";
 import CommentList from "../components/CommentList";
 import UserContext from "../contexts/UserContext";
 import RecipeRating from "../components/RecipeRating";
@@ -14,21 +14,20 @@ const RecipeDetails = () => {
   const { userInfo } = useContext(UserContext);
   const [recipe, setRecipe] = useState("");
   const [comments, setComments] = useState("");
-  const [isFavourite, setIsFavorite] = useState(false);
   const { id } = useParams();
   const history = useHistory();
   useEffect(() => {
     fetchRecipe();
     fetchComments();
-    fetchIsFavourite();
   }, []);
 
   const fetchRecipe = () => {
     axios
       .get("/api/recipes/" + id)
       .then((response) => {
-        var isodate = new Date(response.data.creationDate);
-        response.data.creationDate = isodate.toLocaleDateString("hr-HR");
+        response.data.creationDate = isoDateToLocale(
+          response.data.creationDate
+        );
         setRecipe(response.data);
       })
       .catch((error) => {
@@ -45,19 +44,6 @@ const RecipeDetails = () => {
         console.log(error);
       });
   };
-  const fetchIsFavourite = () => {
-    var token = Cookies.get("JWT");
-    axios
-      .get("/api/recipes/" + id + "/favourite", {
-        headers: { Authorization: "Bearer " + token },
-      })
-      .then((response) => {
-        setIsFavorite(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
   const fetchComments = () => {
     axios
       .get("/api/recipes/" + id + "/comments")
@@ -69,7 +55,7 @@ const RecipeDetails = () => {
       });
   };
   function handleDelete() {
-    var token = Cookies.get("JWT");
+    var token = getJWT();
     axios
       .delete("/api/recipes/" + id, {
         headers: { Authorization: "Bearer " + token },
@@ -84,40 +70,6 @@ const RecipeDetails = () => {
 
   function handleEdit() {
     history.push("/edit/" + id);
-  }
-
-  function handleFavourite() {
-    var token = Cookies.get("JWT");
-    if (!isFavourite) {
-      console.log("nije favorit");
-      axios
-        .post(
-          "/api/recipes/" + id + "/favourite",
-          {},
-          {
-            headers: { Authorization: "Bearer " + token },
-          }
-        )
-        .then(() => {
-          setIsFavorite(!isFavourite);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else if (isFavourite) {
-      if (isFavourite) {
-        axios
-          .delete("/api/recipes/" + id + "/favourite", {
-            headers: { Authorization: "Bearer " + token },
-          })
-          .then(() => {
-            setIsFavorite(!isFavourite);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-    }
   }
 
   return (

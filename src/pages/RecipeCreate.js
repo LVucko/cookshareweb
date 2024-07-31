@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import axios from "axios";
-import Cookies from "js-cookie";
 import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
 import { useEffect } from "react";
-
+import PictureUpload from "../components/PictureUpload";
+import { getJWT } from "../utils/utilities";
 const RecipeCreate = () => {
   const { userInfo } = useContext(UserContext);
   const [recipe, setRecipe] = useState({
@@ -17,7 +17,6 @@ const RecipeCreate = () => {
     pictureIds: [0],
   });
   const [allCategories, setAllCategories] = useState();
-  const [file, setFile] = useState("");
   const [isProcesing, setIsProcessing] = useState(false);
   const history = useHistory();
 
@@ -47,36 +46,10 @@ const RecipeCreate = () => {
     }
   };
 
-  function handlePictureChange(e) {
-    setIsProcessing(true);
-    if (e.target.files[0] === undefined) {
-      setRecipe({ ...recipe, pictureIds: [0] });
-      setFile(undefined);
-      setIsProcessing(false);
-      return;
-    }
-    setFile(URL.createObjectURL(e.target.files[0]));
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    axios
-      .post("/api/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((response) => {
-        setIsProcessing(false);
-        setRecipe({ ...recipe, pictureIds: [response.data] });
-      })
-      .catch((error) => {
-        setIsProcessing(false);
-        console.log(error);
-      });
-  }
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsProcessing(true);
-    var token = Cookies.get("JWT");
+    var token = getJWT();
     axios
       .post("/api/recipes", recipe, {
         headers: { Authorization: "Bearer " + token },
@@ -141,15 +114,13 @@ const RecipeCreate = () => {
                 </label>
               </div>
             ))}
-          <div className="Image">
-            <label>Slika:</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handlePictureChange}
-            />
-            {file && <img src={file} alt="Uploaded" />}
-          </div>
+          <PictureUpload
+            setId={(e) => {
+              setRecipe({ ...recipe, pictureIds: [e] });
+            }}
+            setIsProcessing={(e) => setIsProcessing(e)}
+            defaultPictureId={0}
+          ></PictureUpload>
           {!isProcesing && <button>Dodaj recept</button>}
           {isProcesing && (
             <button id="disabledButton" disabled={true}>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import axios from "axios";
+import { getJWT } from "../utils/utilities";
 
 const FavouriteButton = ({ id, numberOfFavourites, fetchRecipe }) => {
   const [isFavourite, setIsFavorite] = useState(false);
@@ -8,7 +8,7 @@ const FavouriteButton = ({ id, numberOfFavourites, fetchRecipe }) => {
     fetchIsFavourite();
   }, []);
   const fetchIsFavourite = () => {
-    var token = Cookies.get("JWT");
+    var token = getJWT();
     axios
       .get("/api/recipes/" + id + "/favourite", {
         headers: { Authorization: "Bearer " + token },
@@ -21,9 +21,8 @@ const FavouriteButton = ({ id, numberOfFavourites, fetchRecipe }) => {
       });
   };
   function handleFavourite() {
-    var token = Cookies.get("JWT");
+    var token = getJWT();
     if (!isFavourite) {
-      console.log("nije favorit");
       axios
         .post(
           "/api/recipes/" + id + "/favourite",
@@ -65,7 +64,7 @@ const FavouriteButton = ({ id, numberOfFavourites, fetchRecipe }) => {
             handleFavourite();
           }}
         >
-          -1 ❤ ({numberOfFavourites})
+          {numberOfFavourites} ❤
         </button>
       )}
       {!isFavourite && (
@@ -75,7 +74,7 @@ const FavouriteButton = ({ id, numberOfFavourites, fetchRecipe }) => {
             handleFavourite();
           }}
         >
-          +1 ❤ ({numberOfFavourites})
+          {numberOfFavourites} ❤
         </button>
       )}
     </>

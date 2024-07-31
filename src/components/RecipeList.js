@@ -3,12 +3,12 @@ import StarRating from "./StarRating";
 import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
 import axios from "axios";
-import Cookies from "js-cookie";
+import { getJWT } from "../utils/utilities";
 
 const RecipeList = ({ recipes, fetchRecipes }) => {
   const { userInfo } = useContext(UserContext);
   function handleDelete(id) {
-    var token = Cookies.get("JWT");
+    var token = getJWT();
     axios
       .delete("/api/recipes/" + id, {
         headers: { Authorization: "Bearer " + token },

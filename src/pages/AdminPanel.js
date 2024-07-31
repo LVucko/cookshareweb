@@ -3,12 +3,12 @@ import axios from "axios";
 import CommentList from "../components/CommentList";
 import RecipeList from "../components/RecipeList";
 import CategoryList from "../components/CategoryList";
-import Cookies from "js-cookie";
 import UserContext from "../contexts/UserContext";
 import NotFound from "./NotFound";
 import ImageBox from "../components/ImageBox";
-import { isoDateToLocale } from "../utils/utilities";
+import { isoDateToLocale, getJWT } from "../utils/utilities";
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
+
 const AdminPanel = () => {
   const { userInfo } = useContext(UserContext);
   const [userId, setId] = useState("");
@@ -21,10 +21,13 @@ const AdminPanel = () => {
   const [newRole, setNewRole] = useState("USER");
   const [pictures, setPictures] = useState();
   const history = useHistory();
+
   useEffect(() => {
-    fetchCategories();
-    fetchPictures();
-  }, []);
+    if (userInfo) {
+      fetchCategories();
+      fetchPictures();
+    }
+  }, [userInfo]);
   useEffect(() => {
     if (user) {
       fetchComments();
@@ -36,7 +39,7 @@ const AdminPanel = () => {
     setNewRole(event.target.value);
   };
   function fetchPictures() {
-    var token = Cookies.get("JWT");
+    const token = getJWT();
     axios
       .get("/api/upload", {
         headers: { Authorization: "Bearer " + token },
@@ -50,7 +53,7 @@ const AdminPanel = () => {
   }
 
   function addCategory() {
-    var token = Cookies.get("JWT");
+    const token = getJWT();
     axios
       .post(
         "/api/categories/" + newCategory,
@@ -59,7 +62,7 @@ const AdminPanel = () => {
           headers: { Authorization: "Bearer " + token },
         }
       )
-      .then((response) => {
+      .then(() => {
         fetchCategories();
       })
       .catch((error) => {
@@ -68,7 +71,7 @@ const AdminPanel = () => {
   }
 
   function changeRole() {
-    var token = Cookies.get("JWT");
+    var token = getJWT();
     axios
       .post(
         "/api/users/" + user.id + "/role/" + newRole,
@@ -93,7 +96,7 @@ const AdminPanel = () => {
       });
   }
   function fetchComments() {
-    var token = Cookies.get("JWT");
+    var token = getJWT();
     axios
       .get("/api/users/" + userId + "/comments", {
         headers: { Authorization: "Bearer " + token },
@@ -120,7 +123,7 @@ const AdminPanel = () => {
       setUserError("ID ne može biti prazan");
       return;
     }
-    var token = Cookies.get("JWT");
+    var token = getJWT();
     axios
       .get("/api/users/personal/" + userId, {
         headers: { Authorization: "Bearer " + token },
@@ -222,13 +225,13 @@ const AdminPanel = () => {
                     <CommentList
                       comments={userComments}
                       fetchComments={fetchComments}
-                    ></CommentList>
+                    />
                   </div>
                 )}
                 {recipes && recipes.length !== 0 && (
                   <div className="recipe-container">
                     <h2>Svi recepti korisnika {user.username}</h2>
-                    <RecipeList recipes={recipes}></RecipeList>
+                    <RecipeList recipes={recipes} />
                   </div>
                 )}
               </>
@@ -237,7 +240,8 @@ const AdminPanel = () => {
         </div>
       </div>
     );
-  else return <NotFound></NotFound>;
+  else if (!userInfo || (userInfo && userInfo.role !== "ADMIN"))
+    return <NotFound />;
 };
 
 export default AdminPanel;

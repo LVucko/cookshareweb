@@ -2,26 +2,16 @@ import { useHistory, useParams } from "react-router-dom/cjs/react-router-dom";
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import UserContext from "../contexts/UserContext";
-import Cookies from "js-cookie";
 import NotFound from "./NotFound";
-
+import PictureUpload from "../components/PictureUpload";
+import { getJWT } from "../utils/utilities";
+import { validateEmail } from "../utils/registrationValidator";
 const UserEdit = () => {
   const { userInfo } = useContext(UserContext);
   const { id } = useParams();
   const history = useHistory();
-  const [file, setFile] = useState("");
   const [isProcesing, setIsProcessing] = useState(false);
-  const [user, setUser] = useState({
-    id: "",
-    email: "",
-    realName: "",
-    phone: "",
-    about: "",
-    pictureId: "0",
-    showRealName: false,
-    showPhone: false,
-    showEmail: false,
-  });
+  const [user, setUser] = useState(null);
   const [error, setError] = useState({
     email: "",
     realName: "",
@@ -29,59 +19,45 @@ const UserEdit = () => {
     about: "",
   });
   useEffect(() => {
-    var token = Cookies.get("JWT");
-    axios
-      .get("/api/users/personal/" + id, {
-        headers: { Authorization: "Bearer " + token },
-      })
-      .then((response) => {
-        setUser(response.data);
-        setFile("/../../" + response.data.pathToPicture);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+    if (userInfo) {
+      var token = getJWT();
+      axios
+        .get("/api/users/personal/" + id, {
+          headers: { Authorization: "Bearer " + token },
+        })
+        .then((response) => {
+          console.log(response.data);
+          setUser(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [userInfo]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    var token = Cookies.get("JWT");
+    console.log(user);
+    var token = getJWT();
     axios
       .put("/api/users", user, {
         headers: { Authorization: "Bearer " + token },
       })
-      .then((response) => {
-        console.log(response);
+      .then(() => {
         history.push("/users/" + id);
       })
       .catch((error) => {
         console.log(error);
+        if (error.response.data.message === "Email taken")
+          setError({ ...error, email: "e-mail je već u upotrebi" });
       });
   };
-  function handlePictureChange(e) {
-    setIsProcessing(true);
-    if (e.target.files[0] === undefined) {
-      setFile(undefined);
-      return;
-    }
-    setFile(URL.createObjectURL(e.target.files[0]));
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    axios
-      .post("/api/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((response) => {
-        setIsProcessing(false);
-        console.log(response.data);
-        setUser({ ...user, pictureId: response.data });
-      })
-      .catch((error) => {
-        setIsProcessing(false);
-        console.log(error);
-      });
-  }
+
+  const onEmailChange = (e) => {
+    setUser({ ...user, email: e });
+    setError({ ...error, email: validateEmail(e) });
+  };
+
   if (
     userInfo &&
     user &&
@@ -111,8 +87,10 @@ const UserEdit = () => {
           <input
             type="email"
             value={user.email}
-            onChange={(e) => setUser({ ...user, email: e.target.value })}
+            onChange={(e) => onEmailChange(e.target.value)}
+            onBlur={(e) => onEmailChange(e.target.value)}
           ></input>
+          <p>{error.email}</p>
           <label>Prikaz e-maila na profilu:</label>
           <input
             type="checkbox"
@@ -138,15 +116,13 @@ const UserEdit = () => {
             value={user.about}
             onChange={(e) => setUser({ ...user, about: e.target.value })}
           ></textarea>
-          <div className="Image">
-            <label>Slika:</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handlePictureChange}
-            />
-            {file && <img src={file} alt="Uploaded" />}
-          </div>
+          <PictureUpload
+            pathToPicture={"/../../" + user.pathToPicture}
+            setId={(e) => {
+              setUser({ ...user, pictureId: e });
+            }}
+            setIsProcessing={(e) => setIsProcessing(e)}
+          ></PictureUpload>
           {isProcesing && (
             <button id="disabledButton" disabled={true}>
               Primjeni promjene

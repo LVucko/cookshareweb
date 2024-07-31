@@ -1,13 +1,13 @@
 import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
-import Cookies from "js-cookie";
+import { getJWT } from "../utils/utilities";
 import axios from "axios";
 
 const CategoryList = ({ categories, fetchCategories }) => {
   const { userInfo } = useContext(UserContext);
 
   function handleDelete(id) {
-    var token = Cookies.get("JWT");
+    var token = getJWT();
     axios
       .delete("api/categories/" + id, {
         headers: { Authorization: "Bearer " + token },

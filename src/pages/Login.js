@@ -4,6 +4,7 @@ import { useHistory, Link } from "react-router-dom/cjs/react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { decodeToken } from "react-jwt";
+import LoggedIn from "../components/LoggedIn";
 const Login = () => {
   const history = useHistory();
   const [isProcesing, setIsProcessing] = useState(false);
@@ -83,16 +84,7 @@ const Login = () => {
         </form>
       </div>
     );
-  else
-    return (
-      <div className="register">
-        <h2>Već ste prijavljeni</h2>
-        <p>
-          <br></br>
-        </p>
-        <Link to="/">Početna stranica</Link>
-      </div>
-    );
+  else return <LoggedIn />;
 };
 
 export default Login;

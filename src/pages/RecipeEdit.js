@@ -2,9 +2,9 @@ import UserContext from "../contexts/UserContext";
 import { useState, useContext, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom/cjs/react-router-dom";
 import axios from "axios";
-import Cookies from "js-cookie";
 import NotFound from "./NotFound";
-
+import PictureUpload from "../components/PictureUpload";
+import { getJWT } from "../utils/utilities";
 const RecipeEdit = () => {
   const { userInfo } = useContext(UserContext);
   const { id } = useParams();
@@ -18,7 +18,7 @@ const RecipeEdit = () => {
     shortDescription: "",
     longDescription: "",
     categories: "",
-    pictureIds: [],
+    pictureIds: [0],
   });
   const [allCategories, setAllCategories] = useState(null);
 
@@ -26,14 +26,7 @@ const RecipeEdit = () => {
     axios
       .get("/api/recipes/" + id)
       .then((response) => {
-        setRecipe({
-          ...recipe,
-          userId: response.data.userId,
-          title: response.data.title,
-          categories: response.data.categories,
-          shortDescription: response.data.shortDescription,
-          longDescription: response.data.longDescription,
-        });
+        setRecipe(response.data);
         setFile("/../../" + response.data.pathToPictures[0]);
         axios
           .get("/api/categories")
@@ -79,35 +72,10 @@ const RecipeEdit = () => {
     }
   };
 
-  function handlePictureChange(e) {
-    setIsProcessing(true);
-    if (e.target.files[0] === undefined) {
-      setFile(undefined);
-      return;
-    }
-    setFile(URL.createObjectURL(e.target.files[0]));
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    axios
-      .post("/api/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((response) => {
-        setIsProcessing(false);
-        console.log(response.data);
-        setRecipe({ ...recipe, pictureIds: [response.data] });
-      })
-      .catch((error) => {
-        setIsProcessing(false);
-        console.log(error);
-      });
-  }
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsProcessing(true);
-    var token = Cookies.get("JWT");
+    var token = getJWT();
     axios
       .put("/api/recipes", recipe, {
         headers: { Authorization: "Bearer " + token },
@@ -180,15 +148,13 @@ const RecipeEdit = () => {
                 </label>
               </div>
             ))}
-          <div className="Image">
-            <label>Slika:</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handlePictureChange}
-            />
-            {file && <img src={file} alt="Uploaded" />}
-          </div>
+          <PictureUpload
+            pathToPicture={"/../../" + recipe.pathToPictures[0]}
+            setId={(e) => {
+              setRecipe({ ...recipe, pictureIds: [e] });
+            }}
+            setIsProcessing={(e) => setIsProcessing(e)}
+          ></PictureUpload>
           {!isProcesing && <button>Izmjeni recept</button>}
           {isProcesing && (
             <button id="disabledButton" disabled={true}>

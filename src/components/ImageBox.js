@@ -1,12 +1,12 @@
 import { useState } from "react";
 import axios from "axios";
-import Cookies from "js-cookie";
+import { getJWT } from "../utils/utilities";
 const ImageBox = ({ pictures, fetchPictures }) => {
   const [currentPictureIndex, setCurrentPictureIndex] = useState(
     pictures.length - 1
   );
   function handleDelete() {
-    var token = Cookies.get("JWT");
+    var token = getJWT();
     axios
       .delete("/api/upload/" + pictures[currentPictureIndex].id, {
         headers: { Authorization: "Bearer " + token },

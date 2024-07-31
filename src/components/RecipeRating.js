@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
+import { getJWT } from "../utils/utilities";
 import axios from "axios";
 
 function RecipeRating({ id, fetchAverageRating }) {
@@ -10,7 +10,7 @@ function RecipeRating({ id, fetchAverageRating }) {
     fetchUserRating();
   }, []);
   const fetchUserRating = () => {
-    var token = Cookies.get("JWT");
+    var token = getJWT();
     axios
       .get("/api/recipes/" + id + "/rating", {
         headers: { Authorization: "Bearer " + token },
@@ -28,7 +28,7 @@ function RecipeRating({ id, fetchAverageRating }) {
     setIsDisabled(true);
     setSelectedRating(rating);
     const newRating = { recipeId: id, rating: rating };
-    var token = Cookies.get("JWT");
+    var token = getJWT();
     if (userRating <= 0)
       axios
         .post("/api/recipes/" + id + "/rating", newRating, {
