@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
-import { Link } from "react-router-dom/cjs/react-router-dom";
 import axios from "axios";
 import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
 import { useEffect } from "react";
 import PictureUpload from "../components/PictureUpload";
 import { getJWT } from "../utils/utilities";
+import Loading from "../components/Loading";
+import Unauthorized from "./Unauthorized";
 const RecipeCreate = () => {
   const { userInfo } = useContext(UserContext);
   const [recipe, setRecipe] = useState({
@@ -49,10 +50,9 @@ const RecipeCreate = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsProcessing(true);
-    var token = getJWT();
     axios
       .post("/api/recipes", recipe, {
-        headers: { Authorization: "Bearer " + token },
+        headers: { Authorization: "Bearer " + getJWT() },
       })
       .then((response) => {
         history.push("/recipes/" + response.data);
@@ -64,7 +64,7 @@ const RecipeCreate = () => {
         setIsProcessing(false);
       });
   };
-  if (userInfo)
+  if (userInfo && userInfo.role !== "GUEST")
     return (
       <div className="register">
         <h2>Dodaj novi recept</h2>
@@ -130,20 +130,9 @@ const RecipeCreate = () => {
         </form>
       </div>
     );
-  else
-    return (
-      <div className="register">
-        <h2>Morate biti ulogirani kako bi se objavili recept</h2>
-        <p>
-          <br></br>
-        </p>
-        <Link to="/login">Kliknite ovdje za prijavu</Link>
-        <p>
-          <br></br>
-        </p>
-        <Link to="/register">Kliknite ovdje za registraciju</Link>
-      </div>
-    );
+  else if (userInfo && userInfo.role === "GUEST")
+    return <Unauthorized></Unauthorized>;
+  else return <Loading></Loading>;
 };
 
 export default RecipeCreate;

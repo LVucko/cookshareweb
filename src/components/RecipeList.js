@@ -8,10 +8,9 @@ import { getJWT } from "../utils/utilities";
 const RecipeList = ({ recipes, fetchRecipes }) => {
   const { userInfo } = useContext(UserContext);
   function handleDelete(id) {
-    var token = getJWT();
     axios
       .delete("/api/recipes/" + id, {
-        headers: { Authorization: "Bearer " + token },
+        headers: { Authorization: "Bearer " + getJWT() },
       })
       .then(() => {
         fetchRecipes();
@@ -43,7 +42,6 @@ const RecipeList = ({ recipes, fetchRecipes }) => {
                   Obriši
                 </button>
               )}
-            {(!userInfo || userInfo.role === "USER") && <div></div>}
             <StarRating rating={recipe.averageRating}></StarRating>
           </div>
           <div className="text-container">

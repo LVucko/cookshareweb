@@ -7,6 +7,7 @@ export const isoDateToLocale = (isoDate) => {
 export const getJWT = () => {
   var token = Cookies.get("JWT");
   if (token === undefined) {
+    console.log("token expired");
     toast.error("Vaša sesija je istekla, molimo prijavite se ponovo", {
       toastId: 0,
       closeButton: false,
@@ -18,7 +19,6 @@ export const getJWT = () => {
       draggable: false,
       progress: undefined,
       theme: "light",
-
       onClose: () => {
         window.location.reload();
       },

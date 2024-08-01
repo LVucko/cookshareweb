@@ -5,6 +5,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { decodeToken } from "react-jwt";
 import LoggedIn from "../components/LoggedIn";
+import Loading from "../components/Loading";
 const Login = () => {
   const history = useHistory();
   const [isProcesing, setIsProcessing] = useState(false);
@@ -45,7 +46,7 @@ const Login = () => {
         setIsProcessing(false);
       });
   };
-  if (!userInfo)
+  if (userInfo && userInfo.role === "GUEST")
     return (
       <div className="register">
         <h2>Prijava:</h2>
@@ -84,7 +85,8 @@ const Login = () => {
         </form>
       </div>
     );
-  else return <LoggedIn />;
+  else if (userInfo && userInfo.role !== "GUEST") return <LoggedIn />;
+  else return <Loading></Loading>;
 };
 
 export default Login;

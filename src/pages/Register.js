@@ -9,6 +9,7 @@ import {
 } from "../utils/registrationValidator";
 import PictureUpload from "../components/PictureUpload";
 import LoggedIn from "../components/LoggedIn";
+import Loading from "../components/Loading";
 
 const Register = () => {
   const { userInfo } = useContext(UserContext);
@@ -88,12 +89,14 @@ const Register = () => {
         console.log(error);
       });
   };
-  if (!userInfo)
+  if (userInfo && userInfo.role === "GUEST")
     return (
       <div className="register">
         <h2>Kreiranje novog korisničkog profila:</h2>
         <h4>Već posjedujete račun?</h4>
-        <Link to="/login">Kliknite ovdje za prijavu</Link>
+        <Link to="/login" replace={true}>
+          Kliknite ovdje za prijavu
+        </Link>
         <p>
           <br></br>
         </p>
@@ -186,7 +189,8 @@ const Register = () => {
         </form>
       </div>
     );
-  else return <LoggedIn />;
+  else if (userInfo && userInfo.role !== "GUEST") return <LoggedIn />;
+  else return <Loading></Loading>;
 };
 
 export default Register;

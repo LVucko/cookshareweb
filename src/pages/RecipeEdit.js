@@ -2,14 +2,14 @@ import UserContext from "../contexts/UserContext";
 import { useState, useContext, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom/cjs/react-router-dom";
 import axios from "axios";
-import NotFound from "./NotFound";
 import PictureUpload from "../components/PictureUpload";
 import { getJWT } from "../utils/utilities";
+import Loading from "../components/Loading";
+import Unauthorized from "./Unauthorized";
 const RecipeEdit = () => {
   const { userInfo } = useContext(UserContext);
   const { id } = useParams();
   const history = useHistory();
-  const [file, setFile] = useState("");
   const [isProcesing, setIsProcessing] = useState(false);
   const [recipe, setRecipe] = useState({
     id: id,
@@ -27,7 +27,6 @@ const RecipeEdit = () => {
       .get("/api/recipes/" + id)
       .then((response) => {
         setRecipe(response.data);
-        setFile("/../../" + response.data.pathToPictures[0]);
         axios
           .get("/api/categories")
           .then((response) => {
@@ -75,10 +74,9 @@ const RecipeEdit = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsProcessing(true);
-    var token = getJWT();
     axios
       .put("/api/recipes", recipe, {
-        headers: { Authorization: "Bearer " + token },
+        headers: { Authorization: "Bearer " + getJWT() },
       })
       .then((response) => {
         history.push("/recipes/" + id);
@@ -164,7 +162,9 @@ const RecipeEdit = () => {
         </form>
       </div>
     );
-  else return <NotFound></NotFound>;
+  else if (userInfo && userInfo.role === "GUEST")
+    return <Unauthorized></Unauthorized>;
+  else return <Loading></Loading>;
 };
 
 export default RecipeEdit;

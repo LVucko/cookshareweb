@@ -55,10 +55,9 @@ const RecipeDetails = () => {
       });
   };
   function handleDelete() {
-    var token = getJWT();
     axios
       .delete("/api/recipes/" + id, {
-        headers: { Authorization: "Bearer " + token },
+        headers: { Authorization: "Bearer " + getJWT() },
       })
       .then(() => {
         history.push("/");
@@ -93,8 +92,10 @@ const RecipeDetails = () => {
             <h3>
               Kategorije: {recipe.categories.toString().replaceAll(",", ", ")}
             </h3>
-            {!userInfo && <h3>Prijavite se za ocjenjivanje</h3>}
-            {userInfo && (
+            {userInfo && userInfo.role === "GUEST" && (
+              <h3>Prijavite se za ocjenjivanje</h3>
+            )}
+            {userInfo && userInfo.role !== "GUEST" && (
               <h3 className="tight-row">
                 Vaša ocjena:{" "}
                 <RecipeRating
@@ -110,7 +111,7 @@ const RecipeDetails = () => {
             </h4>
             <div className="tight-row">
               <h4>Objavljen: {recipe.creationDate}</h4>
-              {userInfo && (
+              {userInfo && userInfo.role !== "GUEST" && (
                 <FavouriteButton
                   id={id}
                   numberOfFavourites={recipe.numberOfFavourites}
@@ -154,8 +155,14 @@ const RecipeDetails = () => {
           <img src={"/../../" + recipe.pathToPictures[0]} alt="Recipe"></img>
         </article>
       )}
-      {comments && (
-        <NewComment id={id} fetchComments={fetchComments}></NewComment>
+      {userInfo && comments && (
+        <NewComment
+          id={id}
+          fetchComments={fetchComments}
+          isActive={() => {
+            return userInfo.role !== "GUEST";
+          }}
+        ></NewComment>
       )}
       <h2>Komentari:</h2>
       {!comments && <Loading></Loading>}

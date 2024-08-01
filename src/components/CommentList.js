@@ -1,20 +1,16 @@
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
-import { getJWT } from "../utils/utilities";
+import { getJWT, isoDateToLocale } from "../utils/utilities";
 import axios from "axios";
 
 const CommentList = ({ comments, fetchComments }) => {
   const { userInfo } = useContext(UserContext);
-  const getDate = (isostring) => {
-    var isodate = new Date(isostring);
-    return isodate.toLocaleString("Hr-hr");
-  };
+
   function handleDelete(id) {
-    var token = getJWT();
     axios
       .delete("/api/recipes/comment/" + id, {
-        headers: { Authorization: "Bearer " + token },
+        headers: { Authorization: "Bearer " + getJWT() },
       })
       .then(() => {
         fetchComments();
@@ -31,7 +27,7 @@ const CommentList = ({ comments, fetchComments }) => {
             <Link to={`/users/${comment.userId}`}>
               <h4>{comment.username}</h4>
             </Link>
-            <h5>{getDate(comment.time)}</h5>
+            <h5>{isoDateToLocale(comment.time)}</h5>
           </div>
           <div className="row">
             <p>{comment.comment}</p>

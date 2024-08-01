@@ -2,10 +2,11 @@ import { useHistory, useParams } from "react-router-dom/cjs/react-router-dom";
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import UserContext from "../contexts/UserContext";
-import NotFound from "./NotFound";
 import PictureUpload from "../components/PictureUpload";
 import { getJWT } from "../utils/utilities";
 import { validateEmail } from "../utils/registrationValidator";
+import Loading from "../components/Loading";
+import Unauthorized from "./Unauthorized";
 const UserEdit = () => {
   const { userInfo } = useContext(UserContext);
   const { id } = useParams();
@@ -18,12 +19,12 @@ const UserEdit = () => {
     phone: "",
     about: "",
   });
+
   useEffect(() => {
-    if (userInfo) {
-      var token = getJWT();
+    if (userInfo && userInfo.role !== "GUEST") {
       axios
         .get("/api/users/personal/" + id, {
-          headers: { Authorization: "Bearer " + token },
+          headers: { Authorization: "Bearer " + getJWT() },
         })
         .then((response) => {
           console.log(response.data);
@@ -38,10 +39,9 @@ const UserEdit = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(user);
-    var token = getJWT();
     axios
       .put("/api/users", user, {
-        headers: { Authorization: "Bearer " + token },
+        headers: { Authorization: "Bearer " + getJWT() },
       })
       .then(() => {
         history.push("/users/" + id);
@@ -132,7 +132,9 @@ const UserEdit = () => {
         </form>
       </div>
     );
-  else return <NotFound></NotFound>;
+  else if (userInfo && userInfo.role === "GUEST")
+    return <Unauthorized></Unauthorized>;
+  else return <Loading></Loading>;
 };
 
 export default UserEdit;

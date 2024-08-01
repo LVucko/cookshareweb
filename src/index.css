@@ -240,12 +240,14 @@
   text-align: center;
 }
 .not-found h2{
+  font-size: 35px;
   text-align: center;
   color:#f1356d;
   padding: 6px 10px;
   margin: 10px 0;
 }
 .not-found p{
+  font-size: 20px;
   text-align: center;
   color:#333;
   padding: 6px 10px;
@@ -364,7 +366,10 @@
 .user-details button:hover{
   background: hsl(342, 87%, 30%);
 }
-
+.user-details .scrollable-box{
+  max-height: 518px;
+  overflow: auto;
+}
 /* recipe rating */
 .recipe-rating {
   display: inline-block;

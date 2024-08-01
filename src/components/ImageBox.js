@@ -6,12 +6,11 @@ const ImageBox = ({ pictures, fetchPictures }) => {
     pictures.length - 1
   );
   function handleDelete() {
-    var token = getJWT();
     axios
       .delete("/api/upload/" + pictures[currentPictureIndex].id, {
-        headers: { Authorization: "Bearer " + token },
+        headers: { Authorization: "Bearer " + getJWT() },
       })
-      .then((response) => {
+      .then(() => {
         fetchPictures();
       })
       .catch((error) => {

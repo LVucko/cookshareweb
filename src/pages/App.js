@@ -15,6 +15,7 @@ import RecipeEdit from "./RecipeEdit";
 import AdminPanel from "./AdminPanel";
 import UserEdit from "./UserEdit";
 import ToastMessage from "../components/ToastMessage";
+
 function App() {
   const [userInfo, setUserInfo] = useState(null);
   const login = (userData) => {
@@ -22,8 +23,10 @@ function App() {
   };
   const logout = () => {
     Cookies.remove("JWT");
-    console.log(userInfo);
     setUserInfo(null);
+    login({
+      role: "GUEST",
+    });
   };
 
   useEffect(() => {
@@ -31,6 +34,10 @@ function App() {
       login({
         userId: decodeToken(Cookies.get("JWT")).UserId,
         role: decodeToken(Cookies.get("JWT")).Role,
+      });
+    } else {
+      login({
+        role: "GUEST",
       });
     }
   }, []);
@@ -41,7 +48,7 @@ function App() {
         <div className="App">
           <Navbar />
           <div className="content">
-            <ToastMessage />
+            <ToastMessage></ToastMessage>
             <Switch>
               <Route exact path="/">
                 <Home />

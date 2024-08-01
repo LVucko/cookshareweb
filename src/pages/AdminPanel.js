@@ -4,10 +4,11 @@ import CommentList from "../components/CommentList";
 import RecipeList from "../components/RecipeList";
 import CategoryList from "../components/CategoryList";
 import UserContext from "../contexts/UserContext";
-import NotFound from "./NotFound";
 import ImageBox from "../components/ImageBox";
 import { isoDateToLocale, getJWT } from "../utils/utilities";
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
+import Loading from "../components/Loading";
+import Unauthorized from "./Unauthorized";
 
 const AdminPanel = () => {
   const { userInfo } = useContext(UserContext);
@@ -39,10 +40,9 @@ const AdminPanel = () => {
     setNewRole(event.target.value);
   };
   function fetchPictures() {
-    const token = getJWT();
     axios
       .get("/api/upload", {
-        headers: { Authorization: "Bearer " + token },
+        headers: { Authorization: "Bearer " + getJWT() },
       })
       .then((response) => {
         setPictures(response.data);
@@ -53,13 +53,12 @@ const AdminPanel = () => {
   }
 
   function addCategory() {
-    const token = getJWT();
     axios
       .post(
         "/api/categories/" + newCategory,
         {},
         {
-          headers: { Authorization: "Bearer " + token },
+          headers: { Authorization: "Bearer " + getJWT() },
         }
       )
       .then(() => {
@@ -71,13 +70,12 @@ const AdminPanel = () => {
   }
 
   function changeRole() {
-    var token = getJWT();
     axios
       .post(
         "/api/users/" + user.id + "/role/" + newRole,
         {},
         {
-          headers: { Authorization: "Bearer " + token },
+          headers: { Authorization: "Bearer " + getJWT() },
         }
       )
       .then(() => {})
@@ -96,10 +94,9 @@ const AdminPanel = () => {
       });
   }
   function fetchComments() {
-    var token = getJWT();
     axios
       .get("/api/users/" + userId + "/comments", {
-        headers: { Authorization: "Bearer " + token },
+        headers: { Authorization: "Bearer " + getJWT() },
       })
       .then((response) => {
         setUserComments(response.data);
@@ -123,10 +120,9 @@ const AdminPanel = () => {
       setUserError("ID ne može biti prazan");
       return;
     }
-    var token = getJWT();
     axios
       .get("/api/users/personal/" + userId, {
-        headers: { Authorization: "Bearer " + token },
+        headers: { Authorization: "Bearer " + getJWT() },
       })
       .then((response) => {
         console.log(response.data);
@@ -240,8 +236,9 @@ const AdminPanel = () => {
         </div>
       </div>
     );
-  else if (!userInfo || (userInfo && userInfo.role !== "ADMIN"))
-    return <NotFound />;
+  else if (userInfo && userInfo.role !== "ADMIN")
+    return <Unauthorized></Unauthorized>;
+  else return <Loading></Loading>;
 };
 
 export default AdminPanel;

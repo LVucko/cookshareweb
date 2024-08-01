@@ -7,10 +7,9 @@ const CategoryList = ({ categories, fetchCategories }) => {
   const { userInfo } = useContext(UserContext);
 
   function handleDelete(id) {
-    var token = getJWT();
     axios
       .delete("api/categories/" + id, {
-        headers: { Authorization: "Bearer " + token },
+        headers: { Authorization: "Bearer " + getJWT() },
       })
       .then(() => {
         fetchCategories();

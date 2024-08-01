@@ -26,6 +26,11 @@ const UserDetails = () => {
       .catch((error) => {
         console.log(error);
       });
+    fetchAllRecipes();
+    fetchFavouriteRecipes();
+  }, [id]);
+
+  function fetchAllRecipes() {
     axios
       .get("/api/recipes/user/" + id)
       .then((response) => {
@@ -34,6 +39,8 @@ const UserDetails = () => {
       .catch((error) => {
         console.log(error);
       });
+  }
+  function fetchFavouriteRecipes() {
     axios
       .get("/api/recipes/user/" + id + "/favourites")
       .then((response) => {
@@ -42,7 +49,7 @@ const UserDetails = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, [id]);
+  }
 
   return (
     <div className="user-details">
@@ -60,13 +67,6 @@ const UserDetails = () => {
             </div>
             <div className="tight-row">
               <h2>Član od: {user.creationDate}</h2>
-            </div>
-          </div>
-          <div className="last-row">
-            {user.realName.length > 0 && <h2>Ime: {user.realName}</h2>}
-            {user.phone.length > 0 && <h2>Telefon: {user.phone}</h2>}
-            <div className="tight-row">
-              {user.email.length > 0 && <h2>e-mail: {user.email}</h2>}
               {userInfo &&
                 (userInfo.role === "MODERATOR" ||
                   userInfo.role === "ADMIN" ||
@@ -81,27 +81,43 @@ const UserDetails = () => {
                 )}
             </div>
           </div>
+          <div className="last-row">
+            {user.realName.length > 0 && <h2>Ime: {user.realName}</h2>}
+            {user.phone.length > 0 && <h2>Telefon: {user.phone}</h2>}
+            {user.email.length > 0 && <h2>e-mail: {user.email}</h2>}
+          </div>
           <br></br>
-          <h2 className="last-row">
+          <h3 className="last-row">
             {user.about.length > 0
               ? "O meni: " + user.about
               : "Korisnik nije postavio informacije o sebi"}
-          </h2>
+          </h3>
           <br></br>
         </div>
       )}
       {!recipes && <Loading></Loading>}
       {recipes && user && (
         <>
-          <h2>Svi recepti korisnika {user.username}</h2>
-          <RecipeList recipes={recipes}></RecipeList>
+          <h2>Svi recepti korisnika {user.username}:</h2>
+          <div className="scrollable-box">
+            <RecipeList
+              recipes={recipes}
+              fetchRecipes={fetchAllRecipes}
+            ></RecipeList>
+          </div>
         </>
       )}
       {!favouriteRecipes && <Loading></Loading>}
+      <br></br>
       {favouriteRecipes && user && (
         <>
-          <h2>Omiljeni recepti korisnika {user.username}</h2>
-          <RecipeList recipes={favouriteRecipes}></RecipeList>
+          <h2>Omiljeni recepti korisnika {user.username}:</h2>
+          <div className="scrollable-box">
+            <RecipeList
+              recipes={favouriteRecipes}
+              fetchRecipes={fetchFavouriteRecipes}
+            ></RecipeList>
+          </div>
         </>
       )}
     </div>

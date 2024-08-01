@@ -10,10 +10,9 @@ function RecipeRating({ id, fetchAverageRating }) {
     fetchUserRating();
   }, []);
   const fetchUserRating = () => {
-    var token = getJWT();
     axios
       .get("/api/recipes/" + id + "/rating", {
-        headers: { Authorization: "Bearer " + token },
+        headers: { Authorization: "Bearer " + getJWT() },
       })
       .then((response) => {
         setUserRating(response.data);
@@ -28,11 +27,10 @@ function RecipeRating({ id, fetchAverageRating }) {
     setIsDisabled(true);
     setSelectedRating(rating);
     const newRating = { recipeId: id, rating: rating };
-    var token = getJWT();
     if (userRating <= 0)
       axios
         .post("/api/recipes/" + id + "/rating", newRating, {
-          headers: { Authorization: "Bearer " + token },
+          headers: { Authorization: "Bearer " + getJWT() },
         })
         .then(() => {
           fetchAverageRating();
@@ -47,7 +45,7 @@ function RecipeRating({ id, fetchAverageRating }) {
     else
       axios
         .put("/api/recipes/" + id + "/rating", newRating, {
-          headers: { Authorization: "Bearer " + token },
+          headers: { Authorization: "Bearer " + getJWT() },
         })
         .then(() => {
           fetchAverageRating();
