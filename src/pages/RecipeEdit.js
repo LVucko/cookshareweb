@@ -11,15 +11,7 @@ const RecipeEdit = () => {
   const { id } = useParams();
   const history = useHistory();
   const [isProcesing, setIsProcessing] = useState(false);
-  const [recipe, setRecipe] = useState({
-    id: id,
-    userId: "",
-    title: "",
-    shortDescription: "",
-    longDescription: "",
-    categories: "",
-    pictureIds: [0],
-  });
+  const [recipe, setRecipe] = useState(null);
   const [allCategories, setAllCategories] = useState(null);
 
   useEffect(() => {
@@ -27,6 +19,7 @@ const RecipeEdit = () => {
       .get("/api/recipes/" + id)
       .then((response) => {
         setRecipe(response.data);
+        console.log(response.data);
         axios
           .get("/api/categories")
           .then((response) => {
@@ -57,6 +50,7 @@ const RecipeEdit = () => {
   }, [allCategories]);
 
   const handleCheckboxChange = (event) => {
+    console.log(recipe.pathToPictures[0]);
     const checkedId = event.target.value;
     if (event.target.checked) {
       setRecipe({
@@ -78,13 +72,13 @@ const RecipeEdit = () => {
       .put("/api/recipes", recipe, {
         headers: { Authorization: "Bearer " + getJWT() },
       })
-      .then((response) => {
+      .then(() => {
         history.push("/recipes/" + id);
       })
       .catch((error) => {
         console.log(error);
       })
-      .finally((error) => {
+      .finally(() => {
         setIsProcessing(false);
       });
   };

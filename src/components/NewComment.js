@@ -11,6 +11,7 @@ function NewComment({ id, fetchComments, isActive }) {
       setIsDisabled(false);
       setPlaceholder("Unesite svoj komentar");
     } else setPlaceholder("Prijavite se kako bi ste mogli komentirati");
+    console.log(isActive);
   }, []);
 
   function handleComment(e) {

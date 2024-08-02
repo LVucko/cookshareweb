@@ -159,14 +159,12 @@ const RecipeDetails = () => {
         <NewComment
           id={id}
           fetchComments={fetchComments}
-          isActive={() => {
-            return userInfo.role !== "GUEST";
-          }}
+          isActive={userInfo.role !== "GUEST"}
         ></NewComment>
       )}
       <h2>Komentari:</h2>
       {!comments && <Loading></Loading>}
-      {comments && (
+      {comments.length > 0 && (
         <CommentList
           comments={comments}
           fetchComments={fetchComments}
