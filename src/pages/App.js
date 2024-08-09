@@ -15,6 +15,7 @@ import RecipeEdit from "./RecipeEdit";
 import AdminPanel from "./AdminPanel";
 import UserEdit from "./UserEdit";
 import ToastMessage from "../components/ToastMessage";
+import { ConfigProvider, theme } from "antd";
 
 function App() {
   const [userInfo, setUserInfo] = useState(null);
@@ -43,48 +44,57 @@ function App() {
   }, []);
 
   return (
-    <UserContext.Provider value={{ userInfo, login, logout }}>
-      <Router>
-        <div className="App">
-          <Navbar />
-          <div className="content">
-            <ToastMessage></ToastMessage>
-            <Switch>
-              <Route exact path="/">
-                <Home />
-              </Route>
-              <Route exact path="/register">
-                <Register />
-              </Route>
-              <Route exact path="/login">
-                <Login />
-              </Route>
-              <Route exact path="/create">
-                <RecipeCreate />
-              </Route>
-              <Route path="/recipes/:id">
-                <RecipeDetails />
-              </Route>
-              <Route path="/users/:id">
-                <UserDetails />
-              </Route>
-              <Route path="/edit/:id">
-                <RecipeEdit />
-              </Route>
-              <Route path="/customize/:id">
-                <UserEdit />
-              </Route>
-              <Route path="/admin">
-                <AdminPanel />
-              </Route>
-              <Route path="*">
-                <NotFound />
-              </Route>
-            </Switch>
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "#f1356d",
+          colorInfo: "#f1356d",
+        },
+      }}
+    >
+      <UserContext.Provider value={{ userInfo, login, logout }}>
+        <Router>
+          <div className="App">
+            <Navbar />
+            <div className="content">
+              <ToastMessage></ToastMessage>
+              <Switch>
+                <Route exact path="/">
+                  <Home />
+                </Route>
+                <Route exact path="/register">
+                  <Register />
+                </Route>
+                <Route exact path="/login">
+                  <Login />
+                </Route>
+                <Route exact path="/create">
+                  <RecipeCreate />
+                </Route>
+                <Route path="/recipes/:id">
+                  <RecipeDetails />
+                </Route>
+                <Route path="/users/:id">
+                  <UserDetails />
+                </Route>
+                <Route path="/edit/:id">
+                  <RecipeEdit />
+                </Route>
+                <Route path="/customize/:id">
+                  <UserEdit />
+                </Route>
+                <Route path="/admin">
+                  <AdminPanel />
+                </Route>
+                <Route path="*">
+                  <NotFound />
+                </Route>
+              </Switch>
+            </div>
           </div>
-        </div>
-      </Router>
-    </UserContext.Provider>
+        </Router>
+      </UserContext.Provider>
+    </ConfigProvider>
   );
 }
 

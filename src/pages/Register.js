@@ -7,73 +7,20 @@ import {
   validatePassword,
   validateUsername,
 } from "../utils/registrationValidator";
-import PictureUpload from "../components/PictureUpload";
 import LoggedIn from "../components/LoggedIn";
 import Loading from "../components/Loading";
+import { Button, Input, Form } from "antd";
+import ImageUpload from "../components/ImageUpload";
 
 const Register = () => {
   const { userInfo } = useContext(UserContext);
   const history = useHistory();
   const [isProcesing, setIsProcessing] = useState(false);
-  const [user, setUser] = useState({
-    username: "",
-    email: "",
-    realName: "",
-    phone: "",
-    password: "",
-    repeatPassword: "",
-    pictureId: "1",
-  });
-  const [error, setError] = useState({
-    username: "",
-    email: "",
-    realName: "",
-    phone: "",
-    password: "",
-    repeatPassword: "",
-    pictureId: "",
-  });
+  const [form] = Form.useForm();
 
-  const onUsernameChange = (e) => {
-    setUser({ ...user, username: e });
-    setError({ ...error, username: validateUsername(e) });
-  };
-
-  const onEmailChange = (e) => {
-    setUser({ ...user, email: e });
-    setError({ ...error, email: validateEmail(e) });
-  };
-
-  const onPasswordChange = (e) => {
-    setUser({ ...user, password: e });
-    if (e === user.repeatPassword) {
-      setError({
-        ...error,
-        password: validatePassword(e),
-        repeatPassword: null,
-      });
-    } else {
-      setError({
-        ...error,
-        password: validatePassword(e),
-        repeatPassword: "Lozinke se ne podudaraju",
-      });
-    }
-  };
-
-  const onRepeatPasswordChange = (e) => {
-    setUser({ ...user, repeatPassword: e });
-    if (e === user.password) {
-      setError({ ...error, repeatPassword: null });
-    } else {
-      setError({ ...error, repeatPassword: "Lozinke se ne podudaraju" });
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (values) => {
     axios
-      .post("/api/users/register", user, {
+      .post("/api/users/register", values, {
         headers: { "Content-Type": "application/json" },
       })
       .then(() => {
@@ -81,112 +28,162 @@ const Register = () => {
       })
       .catch((error) => {
         if (error.response.data.message === "Username taken") {
-          setError({ ...error, username: "Korisničko ime je već zauzeto" });
+          form.setFields([
+            {
+              name: "username",
+              errors: ["Korisničko ime je već zauzeto"],
+            },
+          ]);
         }
         if (error.response.data.message === "Email taken") {
-          setError({ ...error, email: "E-mail je već u upotrebi" });
+          form.setFields([
+            {
+              name: "email",
+              errors: ["E-mail je već u upotrebi"],
+            },
+          ]);
         }
         console.log(error);
       });
   };
+
   if (userInfo && userInfo.role === "GUEST")
     return (
-      <div className="register">
+      <div className="default-form">
         <h2>Kreiranje novog korisničkog profila:</h2>
         <h4>Već posjedujete račun?</h4>
         <Link to="/login" replace={true}>
           Kliknite ovdje za prijavu
         </Link>
-        <p>
+        <Form
+          autoComplete="off"
+          layout="vertical"
+          form={form}
+          name="form"
+          onFinish={handleSubmit}
+        >
           <br></br>
-        </p>
-        <form onSubmit={handleSubmit}>
-          <label>
-            Korisničko ime: <span style={{ color: "red" }}>*</span>
-          </label>
-          <input
-            type="text"
+          <Form.Item
+            name="username"
+            label="Korisničko ime:"
             required
-            value={user.username}
-            onChange={(e) => onUsernameChange(e.target.value)}
-            onBlur={(e) => onUsernameChange(e.target.value)}
-          ></input>
-          <p>{error.username}</p>
-          <label>
-            Adresa e-pošte: <span style={{ color: "red" }}>*</span>
-          </label>
-          <input
-            type="email"
+            hasFeedback
+            rules={[
+              {
+                validator: (_, value) => {
+                  if (!validateUsername(value)) {
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject(validateUsername(value));
+                  }
+                },
+              },
+            ]}
+          >
+            <Input type="text"></Input>
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label="E-mail:"
             required
-            value={user.email}
-            onChange={(e) => onEmailChange(e.target.value)}
-            onBlur={(e) => onEmailChange(e.target.value)}
-          ></input>
-          <p>{error.email}</p>
-          <label>Ime i Prezime: </label>
-          <input
-            type="name"
-            value={user.realName}
-            onChange={(e) => setUser({ ...user, realName: e.target.value })}
-          ></input>
-          <label>Broj telefona: </label>
-          <input
-            type="tel"
-            value={user.phone}
-            onChange={(e) => setUser({ ...user, phone: e.target.value })}
-          ></input>
-          <label>
-            Lozinka: <span style={{ color: "red" }}>*</span>
-          </label>
-          <input
-            type="password"
+            hasFeedback
+            rules={[
+              {
+                validator: (_, value) => {
+                  if (!validateEmail(value)) {
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject(validateEmail(value));
+                  }
+                },
+              },
+            ]}
+          >
+            <Input type="email" />
+          </Form.Item>
+
+          <Form.Item name="realName" label="Ime:" required={false}>
+            <Input type="name" />
+          </Form.Item>
+
+          <Form.Item name="phone" label="Broj telefona:" required={false}>
+            <Input type="tel" />
+          </Form.Item>
+
+          <Form.Item
+            name="password"
+            label="Lozinka:"
             required
-            value={user.password}
-            onChange={(e) => onPasswordChange(e.target.value)}
-            onBlur={(e) => onPasswordChange(e.target.value)}
-          ></input>
-          <p>{error.password}</p>
-          <label>
-            Ponovi lozinku: <span style={{ color: "red" }}>*</span>
-          </label>
-          <input
-            type="password"
+            hasFeedback
+            rules={[
+              {
+                validator: (_, value) => {
+                  if (!validatePassword(value)) {
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject(validatePassword(value));
+                  }
+                },
+              },
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+
+          <Form.Item
+            name="repeatPassword"
+            label="Ponovi lozinku:"
+            dependencies={["password"]}
             required
-            value={user.repeatPassword}
-            onChange={(e) => onRepeatPasswordChange(e.target.value)}
-            onBlur={(e) => onRepeatPasswordChange(e.target.value)}
-          ></input>
-          <p>{error.repeatPassword}</p>
-          <PictureUpload
-            setId={(e) => {
-              setUser({ ...user, pictureId: e });
-            }}
-            setIsProcessing={(e) => setIsProcessing(e)}
-            defaultPictureId={1}
-          ></PictureUpload>
-          <label>
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: "Molimo ponovite lozinku",
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject("Lozinke se ne podudaraju");
+                },
+              }),
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item
+            label={"Profilna slika:"}
+            name={"pictureId"}
+            initialValue={1}
+            rules={[
+              {
+                validator: (_, value) => {
+                  if (!isNaN(value)) {
+                    console.log(value);
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject(value);
+                  }
+                },
+              },
+            ]}
+          >
+            <ImageUpload isProcessing={(e) => setIsProcessing(e)}></ImageUpload>
+          </Form.Item>
+
+          <p>
             Polja označena sa <span style={{ color: "red" }}>*</span> su
             obavezna
-          </label>
-          <p>
-            <br></br>
           </p>
-          {!isProcesing &&
-          !error.username &&
-          !error.email &&
-          !error.password &&
-          !error.repeatPassword &&
-          user.username &&
-          user.email &&
-          user.password &&
-          user.repeatPassword ? (
-            <button>Registiraj se</button>
-          ) : (
-            <button id="disabledButton" disabled={true}>
-              Registiraj se
-            </button>
-          )}
-        </form>
+          <br></br>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={isProcesing}>
+              Registriraj se
+            </Button>
+          </Form.Item>
+        </Form>
       </div>
     );
   else if (userInfo && userInfo.role !== "GUEST") return <LoggedIn />;

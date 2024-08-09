@@ -9,7 +9,7 @@ import NewComment from "../components/NewComment";
 import StarRating from "../components/StarRating";
 import Loading from "../components/Loading";
 import FavouriteButton from "../components/FavouriteButton";
-
+import { Button, Image } from "antd";
 const RecipeDetails = () => {
   const { userInfo } = useContext(UserContext);
   const [recipe, setRecipe] = useState("");
@@ -127,32 +127,46 @@ const RecipeDetails = () => {
                 (userInfo.role === "MODERATOR" ||
                   userInfo.role === "ADMIN" ||
                   userInfo.userId === recipe.userId) && (
-                  <button
+                  <Button
+                    type="primary"
                     onClick={() => {
                       handleDelete();
                     }}
                   >
                     Obriši recept
-                  </button>
+                  </Button>
                 )}
               {userInfo &&
                 (userInfo.role === "MODERATOR" ||
                   userInfo.role === "ADMIN" ||
                   userInfo.userId === recipe.userId) && (
-                  <button
+                  <Button
+                    type="primary"
                     onClick={() => {
                       handleEdit();
                     }}
                   >
                     Uredi recept
-                  </button>
+                  </Button>
                 )}
             </div>
           </div>
+
           <div className="last-row"></div>
-          <div>{recipe.shortDescription}</div>
-          <div>{recipe.longDescription}</div>
-          <img src={"/../../" + recipe.pathToPictures[0]} alt="Recipe"></img>
+          <p>{recipe.shortDescription}</p>
+          <br></br>
+          <p>{recipe.longDescription}</p>
+          <br></br>
+          <div className="row">
+            <div></div>
+            <Image
+              width={500}
+              src={"/../../" + recipe.pathToPictures[0]}
+              fallback={"/../../default.jpg"}
+            />
+            <div></div>
+          </div>
+          <br></br>
         </article>
       )}
       {userInfo && comments && (

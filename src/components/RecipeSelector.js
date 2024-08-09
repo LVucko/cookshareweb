@@ -1,16 +1,24 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Select } from "antd";
 
 function RecipeSelector({ passSorting, passNumber, passCategory }) {
   const [number, setNumber] = useState("15");
   const [sorting, setSorting] = useState("latest");
   const [category, setCategory] = useState("0");
-  const [categories, setCategories] = useState();
+  const [categories, setCategories] = useState([{ value: "0", label: "Sve" }]);
   useEffect(() => {
     axios
       .get("/api/categories")
       .then((response) => {
-        setCategories(response.data);
+        const options = [
+          { value: "0", label: "Sve" },
+          ...response.data.map((category) => ({
+            value: category.id,
+            label: category.name,
+          })),
+        ];
+        setCategories(options);
       })
       .catch((error) => {
         console.log(error);
@@ -25,14 +33,14 @@ function RecipeSelector({ passSorting, passNumber, passCategory }) {
   useEffect(() => {
     passCategory(category);
   }, [category]);
-  const handleNumberChange = (event) => {
-    setNumber(event.target.value);
+  const handleNumberChange = (value) => {
+    setNumber(value);
   };
-  const handleSortingChange = (event) => {
-    setSorting(event.target.value);
+  const handleSortingChange = (value) => {
+    setSorting(value);
   };
-  const handleCategoryChange = (event) => {
-    setCategory(event.target.value);
+  const handleCategoryChange = (value) => {
+    setCategory(value);
   };
 
   return (
@@ -40,34 +48,62 @@ function RecipeSelector({ passSorting, passNumber, passCategory }) {
       <div className="recipe-selector">
         <div>
           <label>Sortiraj po: </label>
-          <select value={sorting} onChange={handleSortingChange}>
-            <option value="latest">najnoviji</option>
-            <option value="best">najbolje ocjenjeni</option>
-            <option value="least">najmanje ocjenjeni</option>
-          </select>
+          <Select
+            defaultValue="latest"
+            style={{
+              width: 150,
+            }}
+            onChange={handleSortingChange}
+            options={[
+              {
+                value: "latest",
+                label: "najnoviji",
+              },
+              {
+                value: "best",
+                label: "najbolje ocjenjeni",
+              },
+              {
+                value: "least",
+                label: "najmanje ocjenjeni",
+              },
+            ]}
+          ></Select>
         </div>
         <div>
           <label>Broj prikazanih recepata: </label>
-          <select value={number} onChange={handleNumberChange}>
-            <option value="15">15</option>
-            <option value="30">30</option>
-            <option value="60">60</option>
-          </select>
+          <Select
+            defaultValue="15"
+            style={{
+              width: 60,
+            }}
+            onChange={handleNumberChange}
+            options={[
+              {
+                value: "15",
+                label: "15",
+              },
+              {
+                value: "30",
+                label: "30",
+              },
+              {
+                value: "60",
+                label: "60",
+              },
+            ]}
+          ></Select>
         </div>
         <div>
           <label>Kategorija: </label>
-          <select value={category} onChange={handleCategoryChange}>
-            <option key="0" value="0">
-              Sve
-            </option>
-            {categories &&
-              categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            ;
-          </select>
+          <Select
+            defaultValue={"0"}
+            onChange={handleCategoryChange}
+            style={{
+              width: 150,
+            }}
+            options={categories}
+          ></Select>
         </div>
       </div>
     </div>

@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { getJWT } from "../utils/utilities";
+import { Button } from "antd";
+import { Input } from "antd";
+const { TextArea } = Input;
+
 function NewComment({ id, fetchComments, isActive }) {
   const [newComment, setNewComment] = useState("");
   const [placeholder, setPlaceholder] = useState("");
@@ -35,24 +39,29 @@ function NewComment({ id, fetchComments, isActive }) {
   }
 
   return (
-    <form className="comment-new" onSubmit={handleComment}>
-      <textarea
-        placeholder={placeholder}
-        disabled={isDisabled}
-        required
+    <>
+      <TextArea
         value={newComment}
         onChange={(e) => setNewComment(e.target.value)}
-      ></textarea>
+        rows={3}
+        placeholder={placeholder}
+        disabled={isDisabled}
+        maxLength={256}
+      />
       <div className="row">
         <div></div>
-        {!isPending && !isDisabled && <button>Dodaj komentar</button>}
-        {(isPending || isDisabled) && (
-          <button id="disabledButton" disabled={true}>
+        {!isPending && !isDisabled && (
+          <Button type="primary" onClick={handleComment}>
             Dodaj komentar
-          </button>
+          </Button>
+        )}
+        {(isPending || isDisabled) && (
+          <Button type="primary" disabled={true}>
+            Dodaj komentar
+          </Button>
         )}
       </div>
-    </form>
+    </>
   );
 }
 

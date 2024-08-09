@@ -3,7 +3,7 @@ import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
 import { getJWT, isoDateToLocale } from "../utils/utilities";
 import axios from "axios";
-
+import { Button } from "antd";
 const CommentList = ({ comments, fetchComments }) => {
   const { userInfo } = useContext(UserContext);
 
@@ -33,13 +33,14 @@ const CommentList = ({ comments, fetchComments }) => {
             <p>{comment.comment}</p>
             {userInfo &&
               (userInfo.role === "MODERATOR" || userInfo.role === "ADMIN") && (
-                <button
+                <Button
+                  type="primary"
                   onClick={() => {
                     handleDelete(comment.id);
                   }}
                 >
                   Obriši
-                </button>
+                </Button>
               )}
           </div>
         </div>

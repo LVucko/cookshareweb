@@ -7,18 +7,15 @@ import { getJWT } from "../utils/utilities";
 import { validateEmail } from "../utils/registrationValidator";
 import Loading from "../components/Loading";
 import Unauthorized from "./Unauthorized";
+import { Button, Input, Form, Checkbox, Switch } from "antd";
+import ImageUpload from "../components/ImageUpload";
 const UserEdit = () => {
   const { userInfo } = useContext(UserContext);
   const { id } = useParams();
   const history = useHistory();
   const [isProcesing, setIsProcessing] = useState(false);
   const [user, setUser] = useState(null);
-  const [error, setError] = useState({
-    email: "",
-    realName: "",
-    phone: "",
-    about: "",
-  });
+  const [form] = Form.useForm();
 
   useEffect(() => {
     if (userInfo && userInfo.role !== "GUEST") {
@@ -27,7 +24,6 @@ const UserEdit = () => {
           headers: { Authorization: "Bearer " + getJWT() },
         })
         .then((response) => {
-          console.log(response.data);
           setUser(response.data);
         })
         .catch((error) => {
@@ -36,9 +32,8 @@ const UserEdit = () => {
     }
   }, [userInfo]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(user);
+  const handleSubmit = (values) => {
+    const user = { ...values, id: id };
     axios
       .put("/api/users", user, {
         headers: { Authorization: "Bearer " + getJWT() },
@@ -49,13 +44,13 @@ const UserEdit = () => {
       .catch((error) => {
         console.log(error);
         if (error.response.data.message === "Email taken")
-          setError({ ...error, email: "e-mail je već u upotrebi" });
+          form.setFields([
+            {
+              name: "email",
+              errors: ["E-mail je već u upotrebi"],
+            },
+          ]);
       });
-  };
-
-  const onEmailChange = (e) => {
-    setUser({ ...user, email: e });
-    setError({ ...error, email: validateEmail(e) });
   };
 
   if (
@@ -64,72 +59,99 @@ const UserEdit = () => {
     (userInfo.userId === user.id || userInfo.role === "ADMIN")
   )
     return (
-      <div className="register">
-        <form onSubmit={handleSubmit}>
-          <h2>Uređivanje vašeg profila</h2>
+      <div className="default-form">
+        <h2>Uređivanje vašeg profila</h2>
+        <Form
+          autoComplete="off"
+          layout="vertical"
+          form={form}
+          name="form"
+          initialValues={user}
+          onFinish={handleSubmit}
+        >
           <br></br>
-          <label>Ime i prezime: </label>
-          <input
-            type="name"
-            value={user.realName}
-            onChange={(e) => setUser({ ...user, realName: e.target.value })}
-          ></input>
-          <label>Prikaz imena na profilu:</label>
-          <input
-            type="checkbox"
-            checked={user.showRealName}
-            value={user.showRealName}
-            onChange={(e) =>
-              setUser({ ...user, showRealName: !user.showRealName })
-            }
-          ></input>
-          <label>E-mail: </label>
-          <input
-            type="email"
-            value={user.email}
-            onChange={(e) => onEmailChange(e.target.value)}
-            onBlur={(e) => onEmailChange(e.target.value)}
-          ></input>
-          <p>{error.email}</p>
-          <label>Prikaz e-maila na profilu:</label>
-          <input
-            type="checkbox"
-            checked={user.showEmail}
-            value={user.showEmail}
-            onChange={() => setUser({ ...user, showEmail: !user.showEmail })}
-          ></input>
-          <label>Telefon: </label>
-          <input
-            type="tel"
-            value={user.phone}
-            onChange={(e) => setUser({ ...user, phone: e.target.value })}
-          ></input>
-          <label>Prikaz telefona na profilu:</label>
-          <input
-            type="checkbox"
-            checked={user.showPhone}
-            value={user.showPhone}
-            onChange={() => setUser({ ...user, showPhone: !user.showPhone })}
-          ></input>
-          <label>O meni:</label>
-          <textarea
-            value={user.about}
-            onChange={(e) => setUser({ ...user, about: e.target.value })}
-          ></textarea>
-          <PictureUpload
-            pathToPicture={"/../../" + user.pathToPicture}
-            setId={(e) => {
-              setUser({ ...user, pictureId: e });
-            }}
-            setIsProcessing={(e) => setIsProcessing(e)}
-          ></PictureUpload>
-          {isProcesing && (
-            <button id="disabledButton" disabled={true}>
-              Primjeni promjene
-            </button>
-          )}
-          {!isProcesing && <button>Primjeni promjene</button>}
-        </form>
+          <Form.Item name="realName" label="Ime i prezime:">
+            <Input type="text"></Input>
+          </Form.Item>
+          <Form.Item
+            name="showRealName"
+            label="Prikaz imena na profilu"
+            valuePropName="checked"
+            layout="horizontal"
+          >
+            <Switch />
+          </Form.Item>
+
+          <Form.Item
+            name="email"
+            label="e-mail:"
+            rules={[
+              {
+                validator: (_, value) => {
+                  if (!validateEmail(value)) {
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject(validateEmail(value));
+                  }
+                },
+              },
+            ]}
+          >
+            <Input type="text"></Input>
+          </Form.Item>
+          <Form.Item
+            name="showEmail"
+            label="Prikaz e-maila na profilu"
+            valuePropName="checked"
+            layout="horizontal"
+          >
+            <Switch />
+          </Form.Item>
+
+          <Form.Item name="phone" label="Telefon:">
+            <Input type="text"></Input>
+          </Form.Item>
+          <Form.Item
+            name="showPhone"
+            label="Prikaz telefona na profilu"
+            valuePropName="checked"
+            layout="horizontal"
+          >
+            <Switch />
+          </Form.Item>
+
+          <Form.Item name="about" label="O meni:">
+            <Input.TextArea rows={5}></Input.TextArea>
+          </Form.Item>
+
+          <Form.Item
+            label={"Profilna slika:"}
+            name={"pictureId"}
+            initialValue={1}
+            rules={[
+              {
+                validator: (_, value) => {
+                  if (!isNaN(value)) {
+                    console.log(value);
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject(value);
+                  }
+                },
+              },
+            ]}
+          >
+            <ImageUpload
+              isProcessing={(e) => setIsProcessing(e)}
+              currentImagePath={"/../../" + user.pathToPicture}
+            ></ImageUpload>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={isProcesing}>
+              Spremi promjene
+            </Button>
+          </Form.Item>
+        </Form>
       </div>
     );
   else if (userInfo && userInfo.role === "GUEST")

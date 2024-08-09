@@ -4,6 +4,7 @@ import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
 import axios from "axios";
 import { getJWT } from "../utils/utilities";
+import { Button } from "antd";
 
 const RecipeList = ({ recipes, fetchRecipes }) => {
   const { userInfo } = useContext(UserContext);
@@ -33,14 +34,14 @@ const RecipeList = ({ recipes, fetchRecipes }) => {
           <div className="row">
             {userInfo &&
               (userInfo.role === "MODERATOR" || userInfo.role === "ADMIN") && (
-                <button
+                <Button
                   onClick={(e) => {
                     e.preventDefault();
                     handleDelete(recipe.id);
                   }}
                 >
                   Obriši
-                </button>
+                </Button>
               )}
             <StarRating rating={recipe.averageRating}></StarRating>
           </div>

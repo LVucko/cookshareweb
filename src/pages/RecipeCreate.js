@@ -4,51 +4,38 @@ import axios from "axios";
 import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
 import { useEffect } from "react";
-import PictureUpload from "../components/PictureUpload";
 import { getJWT } from "../utils/utilities";
 import Loading from "../components/Loading";
 import Unauthorized from "./Unauthorized";
+import { Button, Input, Form, Checkbox } from "antd";
+import ImageUpload from "../components/ImageUpload";
 const RecipeCreate = () => {
   const { userInfo } = useContext(UserContext);
-  const [recipe, setRecipe] = useState({
-    title: "",
-    shortDescription: "",
-    longDescription: "",
-    categories: [],
-    pictureIds: [0],
-  });
   const [allCategories, setAllCategories] = useState();
   const [isProcesing, setIsProcessing] = useState(false);
   const history = useHistory();
+  const [form] = Form.useForm();
 
   useEffect(() => {
     axios
       .get("/api/categories")
       .then((response) => {
-        setAllCategories(response.data);
+        const categories = response.data.map((category) => {
+          return {
+            label: category.name,
+            value: category.id,
+          };
+        });
+        setAllCategories(categories);
+        console.log(categories);
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
 
-  const handleCheckboxChange = (event) => {
-    const checkedId = event.target.value;
-    if (event.target.checked) {
-      setRecipe({
-        ...recipe,
-        categories: [...recipe.categories, checkedId],
-      });
-    } else {
-      setRecipe({
-        ...recipe,
-        categories: recipe.categories.filter((id) => id !== checkedId),
-      });
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (values) => {
+    const recipe = { ...values, pictureIds: [values.pictureIds] };
     setIsProcessing(true);
     axios
       .post("/api/recipes", recipe, {
@@ -66,68 +53,112 @@ const RecipeCreate = () => {
   };
   if (userInfo && userInfo.role !== "GUEST")
     return (
-      <div className="register">
+      <div className="default-form">
         <h2>Dodaj novi recept</h2>
-        <p>
+        <Form
+          autoComplete="off"
+          layout="vertical"
+          form={form}
+          name="form"
+          onFinish={handleSubmit}
+        >
           <br></br>
-        </p>
-        <form onSubmit={handleSubmit}>
-          <label>Naziv recepta:</label>
-          <input
-            type="text"
-            required
-            value={recipe.title}
-            onChange={(e) => setRecipe({ ...recipe, title: e.target.value })}
-          ></input>
-          <label>Kratki opis:</label>
-          <input
-            type="text"
-            required
-            value={recipe.shortDescription}
-            onChange={(e) =>
-              setRecipe({ ...recipe, shortDescription: e.target.value })
-            }
-          ></input>
-          <label>Postupak:</label>
-          <textarea
-            required
-            value={recipe.longDescription}
-            onChange={(e) =>
-              setRecipe({ ...recipe, longDescription: e.target.value })
-            }
-          ></textarea>
-          <label>Kategorije:</label>
-          {allCategories &&
-            allCategories.map((category) => (
-              <div className="categories" key={category.name}>
-                <label htmlFor={category.name}>
-                  <input
-                    type="checkbox"
-                    id={category.id}
-                    name={category.name}
-                    value={category.id}
-                    onChange={(event) => {
-                      handleCheckboxChange(event);
-                    }}
-                  ></input>
-                  {category.name}
-                </label>
-              </div>
-            ))}
-          <PictureUpload
-            setId={(e) => {
-              setRecipe({ ...recipe, pictureIds: [e] });
-            }}
-            setIsProcessing={(e) => setIsProcessing(e)}
-            defaultPictureId={0}
-          ></PictureUpload>
-          {!isProcesing && <button>Dodaj recept</button>}
-          {isProcesing && (
-            <button id="disabledButton" disabled={true}>
-              Dodaj recept
-            </button>
-          )}
-        </form>
+          <Form.Item
+            name="title"
+            label="Naziv recepta:"
+            hasFeedback
+            rules={[
+              {
+                validator: (_, value) => {
+                  if (value !== undefined && value.length > 0) {
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject("Unesite naziv recepta");
+                  }
+                },
+              },
+            ]}
+          >
+            <Input type="text"></Input>
+          </Form.Item>
+          <Form.Item
+            name="shortDescription"
+            label="Kratki opis:"
+            rules={[
+              {
+                validator: (_, value) => {
+                  if (value !== undefined && value.length > 0) {
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject("Unesite kratki opis");
+                  }
+                },
+              },
+            ]}
+          >
+            <Input type="text"></Input>
+          </Form.Item>
+
+          <Form.Item
+            name="longDescription"
+            label="Postupak:"
+            rules={[
+              {
+                validator: (_, value) => {
+                  if (value !== undefined && value.length > 0) {
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject("Unesite postupak");
+                  }
+                },
+              },
+            ]}
+          >
+            <Input.TextArea type="text" rows={7}></Input.TextArea>
+          </Form.Item>
+          <Form.Item
+            name="categories"
+            label="Kategorije:"
+            rules={[
+              {
+                validator: (_, value) => {
+                  if (value !== undefined && value.length > 0) {
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject("Odaberite barem jednu kategoriju");
+                  }
+                },
+              },
+            ]}
+          >
+            <Checkbox.Group options={allCategories}></Checkbox.Group>
+          </Form.Item>
+
+          <Form.Item
+            label={"Slika recepta:"}
+            name={"pictureIds"}
+            initialValue={0}
+            rules={[
+              {
+                validator: (_, value) => {
+                  if (!isNaN(value)) {
+                    console.log(value);
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject(value);
+                  }
+                },
+              },
+            ]}
+          >
+            <ImageUpload isProcessing={(e) => setIsProcessing(e)}></ImageUpload>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={isProcesing}>
+              Predaj recept
+            </Button>
+          </Form.Item>
+        </Form>
       </div>
     );
   else if (userInfo && userInfo.role === "GUEST")

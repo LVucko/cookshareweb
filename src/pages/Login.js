@@ -6,21 +6,17 @@ import Cookies from "js-cookie";
 import { decodeToken } from "react-jwt";
 import LoggedIn from "../components/LoggedIn";
 import Loading from "../components/Loading";
+import { Input, Button, Form } from "antd";
 const Login = () => {
   const history = useHistory();
   const [isProcesing, setIsProcessing] = useState(false);
-  const [loginError, setLoginError] = useState("");
-  const [user, setUser] = useState({
-    userLogin: "",
-    password: "",
-  });
+  const [form] = Form.useForm();
   const { userInfo, login } = useContext(UserContext);
-  const handleLogin = (e) => {
-    e.preventDefault();
+
+  const handleLogin = (values) => {
     setIsProcessing(true);
-    setLoginError("");
     axios
-      .post("/api/users/login", user)
+      .post("/api/users/login", values)
       .then((response) => {
         const token = response.data.token;
         const expiresIn = response.data.expiresIn;
@@ -35,10 +31,20 @@ const Login = () => {
       })
       .catch((error) => {
         if (error.response.status === 404) {
-          setLoginError("Ne postoji korisnik s tim imenom");
+          form.setFields([
+            {
+              name: "userLogin",
+              errors: ["Ne postoji korisnik s tim imenom"],
+            },
+          ]);
         }
         if (error.response.status === 401) {
-          setLoginError("Pogrešna zaporka");
+          form.setFields([
+            {
+              name: "password",
+              errors: ["Pogrešna zaporka"],
+            },
+          ]);
         }
         console.log(error);
       })
@@ -48,41 +54,58 @@ const Login = () => {
   };
   if (userInfo && userInfo.role === "GUEST")
     return (
-      <div className="register">
+      <div className="default-form">
         <h2>Prijava:</h2>
         <h4>Ne posjedujete račun?</h4>
         <Link to="/register">Kliknite ovdje za registraciju</Link>
-        <p>
+        <Form
+          autoComplete="off"
+          layout="vertical"
+          form={form}
+          name="form"
+          onFinish={handleLogin}
+        >
           <br></br>
-        </p>
-        <form onSubmit={handleLogin}>
-          <label>Korisničko ime ili e-mail: </label>
-          <input
-            type="text"
+          <Form.Item
+            name="userLogin"
+            label="Korisničko ime ili e-mail:"
             required
-            value={user.userLogin}
-            onChange={(e) => setUser({ ...user, userLogin: e.target.value })}
-          ></input>
-          <label>Lozinka: </label>
-          <input
-            type="password"
+            rules={[
+              {
+                validator: (_, value) => {
+                  if (value !== undefined && value.length > 0) {
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject("Unesite korisničko ime");
+                  }
+                },
+              },
+            ]}
+          >
+            <Input type="text"></Input>
+          </Form.Item>
+          <Form.Item
+            name="password"
+            label="Lozinka:"
             required
-            value={user.password}
-            onChange={(e) => setUser({ ...user, password: e.target.value })}
-          ></input>
-          {loginError && <p>{loginError}</p>}
-          {!loginError && (
-            <p>
-              <br></br>
-            </p>
-          )}
-          {user.userLogin && user.password && !isProcesing && (
-            <button>Prijava</button>
-          )}
-          {(!user.userLogin || !user.password || isProcesing) && (
-            <button id="disabledButton">Prijava</button>
-          )}
-        </form>
+            rules={[
+              {
+                validator: (_, value) => {
+                  if (value !== undefined && value.length > 0) {
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject("Unesite lozinku");
+                  }
+                },
+              },
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Button type="primary" htmlType="submit" loading={isProcesing}>
+            Prijava
+          </Button>
+        </Form>
       </div>
     );
   else if (userInfo && userInfo.role !== "GUEST") return <LoggedIn />;

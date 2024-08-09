@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { getJWT } from "../utils/utilities";
+import { Button } from "antd";
 
 const FavouriteButton = ({ id, numberOfFavourites, fetchRecipe }) => {
   const [isFavourite, setIsFavorite] = useState(false);
@@ -54,23 +55,24 @@ const FavouriteButton = ({ id, numberOfFavourites, fetchRecipe }) => {
   return (
     <>
       {isFavourite ? (
-        <button
-          id="unfavourite"
+        <Button
+          type="primary"
+          style={{ background: "#cc235b" }}
           onClick={() => {
             handleFavourite();
           }}
         >
           {numberOfFavourites} ❤
-        </button>
+        </Button>
       ) : (
-        <button
-          id="favourite"
+        <Button
+          type="primary"
           onClick={() => {
             handleFavourite();
           }}
         >
           {numberOfFavourites} ❤
-        </button>
+        </Button>
       )}
     </>
   );

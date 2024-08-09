@@ -2,6 +2,7 @@ import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
 import { getJWT } from "../utils/utilities";
 import axios from "axios";
+import { Button } from "antd";
 
 const CategoryList = ({ categories, fetchCategories }) => {
   const { userInfo } = useContext(UserContext);
@@ -25,13 +26,14 @@ const CategoryList = ({ categories, fetchCategories }) => {
           <p>{"ID: " + category.id + " name: " + category.name}</p>
           {userInfo &&
             (userInfo.role === "MODERATOR" || userInfo.role === "ADMIN") && (
-              <button
+              <Button
+                type="primary"
                 onClick={() => {
                   handleDelete(category.id);
                 }}
               >
                 Obriši
-              </button>
+              </Button>
             )}
         </div>
       ))}

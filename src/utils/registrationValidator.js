@@ -1,5 +1,5 @@
 export const validateUsername = (e) => {
-  if (e === null || e.length === 0) {
+  if (e === undefined || e === null || e.length === 0) {
     return "Molimo unesite korisničko ime";
   } else if (e.length < 6) {
     return "Korisničko ime mora biti barem 6 znakova";
@@ -11,6 +11,9 @@ export const validateUsername = (e) => {
 };
 
 export const validatePassword = (e) => {
+  if (e === undefined || e === null || e.length === 0) {
+    return "Molimo unesite zaporku";
+  }
   if (
     e.match(
       /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\S+$).{8,20}$/
@@ -23,6 +26,9 @@ export const validatePassword = (e) => {
 };
 
 export const validateEmail = (e) => {
+  if (e === undefined || e === null || e.length === 0) {
+    return "Molimo unesite e-mail";
+  }
   if (e.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6}$/i)) {
     return null;
   } else {
