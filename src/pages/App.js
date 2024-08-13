@@ -15,7 +15,7 @@ import RecipeEdit from "./RecipeEdit";
 import AdminPanel from "./AdminPanel";
 import UserEdit from "./UserEdit";
 import ToastMessage from "../components/ToastMessage";
-import { ConfigProvider, theme } from "antd";
+import { ConfigProvider } from "antd";
 
 function App() {
   const [userInfo, setUserInfo] = useState(null);

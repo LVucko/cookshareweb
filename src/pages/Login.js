@@ -27,7 +27,7 @@ const Login = () => {
           userId: decodeToken(Cookies.get("JWT")).UserId,
           role: decodeToken(Cookies.get("JWT")).Role,
         });
-        history.goBack();
+        history.push("/");
       })
       .catch((error) => {
         if (error.response.status === 404) {

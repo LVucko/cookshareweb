@@ -4,7 +4,7 @@ import UserContext from "../contexts/UserContext";
 import { getJWT, isoDateToLocale } from "../utils/utilities";
 import axios from "axios";
 import { Button } from "antd";
-const CommentList = ({ comments, fetchComments }) => {
+const CommentList = ({ comments, fetchComments, admin }) => {
   const { userInfo } = useContext(UserContext);
 
   function handleDelete(id) {
@@ -19,14 +19,22 @@ const CommentList = ({ comments, fetchComments }) => {
         console.log(error);
       });
   }
+
   return (
     <div className="comment-list">
       {comments.map((comment) => (
         <div className="comment" key={comment.id}>
           <div className="comment-header">
-            <Link to={`/users/${comment.userId}`}>
-              <h4>{comment.username}</h4>
-            </Link>
+            {admin === undefined && (
+              <Link to={`/users/${comment.userId}`}>
+                <h4>{comment.username}</h4>
+              </Link>
+            )}
+            {admin !== undefined && (
+              <Link to={`/recipes/${comment.recipeId}`}>
+                <h4>{"ID recepta:" + comment.recipeId}</h4>
+              </Link>
+            )}
             <h5>{isoDateToLocale(comment.time)}</h5>
           </div>
           <div className="row">

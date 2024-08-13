@@ -2,16 +2,19 @@ import { useHistory, useParams } from "react-router-dom/cjs/react-router-dom";
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import UserContext from "../contexts/UserContext";
-import PictureUpload from "../components/PictureUpload";
 import { getJWT } from "../utils/utilities";
 import { validateEmail } from "../utils/registrationValidator";
 import Loading from "../components/Loading";
 import Unauthorized from "./Unauthorized";
-import { Button, Input, Form, Checkbox, Switch } from "antd";
+import { Button, Input, Form, Switch } from "antd";
 import ImageUpload from "../components/ImageUpload";
-const UserEdit = () => {
+import { toast } from "react-toastify";
+const UserEdit = ({ id: propId }) => {
   const { userInfo } = useContext(UserContext);
-  const { id } = useParams();
+  var { id } = useParams();
+  if (id === undefined) {
+    id = propId;
+  }
   const history = useHistory();
   const [isProcesing, setIsProcessing] = useState(false);
   const [user, setUser] = useState(null);
@@ -33,13 +36,28 @@ const UserEdit = () => {
   }, [userInfo]);
 
   const handleSubmit = (values) => {
+    setIsProcessing(true);
     const user = { ...values, id: id };
     axios
       .put("/api/users", user, {
         headers: { Authorization: "Bearer " + getJWT() },
       })
       .then(() => {
-        history.push("/users/" + id);
+        if (propId === undefined) history.push("/users/" + id);
+        else {
+          toast.success("Uspješno izmjenjen profil", {
+            toastId: 0,
+            closeButton: false,
+            position: "top-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: false,
+            progress: undefined,
+            theme: "light",
+          });
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -50,6 +68,9 @@ const UserEdit = () => {
               errors: ["E-mail je već u upotrebi"],
             },
           ]);
+      })
+      .finally(() => {
+        setIsProcessing(false);
       });
   };
 
@@ -74,6 +95,7 @@ const UserEdit = () => {
             <Input type="text"></Input>
           </Form.Item>
           <Form.Item
+            style={{ textAlign: "right" }}
             name="showRealName"
             label="Prikaz imena na profilu"
             valuePropName="checked"
@@ -100,6 +122,7 @@ const UserEdit = () => {
             <Input type="text"></Input>
           </Form.Item>
           <Form.Item
+            style={{ textAlign: "right" }}
             name="showEmail"
             label="Prikaz e-maila na profilu"
             valuePropName="checked"
@@ -112,6 +135,7 @@ const UserEdit = () => {
             <Input type="text"></Input>
           </Form.Item>
           <Form.Item
+            style={{ textAlign: "right" }}
             name="showPhone"
             label="Prikaz telefona na profilu"
             valuePropName="checked"
@@ -132,7 +156,6 @@ const UserEdit = () => {
               {
                 validator: (_, value) => {
                   if (!isNaN(value)) {
-                    console.log(value);
                     return Promise.resolve();
                   } else {
                     return Promise.reject(value);

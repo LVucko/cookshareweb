@@ -35,6 +35,7 @@ const RecipeList = ({ recipes, fetchRecipes }) => {
             {userInfo &&
               (userInfo.role === "MODERATOR" || userInfo.role === "ADMIN") && (
                 <Button
+                  type="primary"
                   onClick={(e) => {
                     e.preventDefault();
                     handleDelete(recipe.id);

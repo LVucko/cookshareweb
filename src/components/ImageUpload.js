@@ -49,7 +49,6 @@ const ImageUpload = ({ value, onChange, isProcessing, currentImagePath }) => {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((response) => {
-        console.log(response.data);
         onChange(response.data);
         isProcessing(false);
         onSuccess("Ok");
@@ -66,7 +65,6 @@ const ImageUpload = ({ value, onChange, isProcessing, currentImagePath }) => {
   };
 
   const handleOnRemove = () => {
-    console.log("removing");
     onChange(defaultPictureId);
   };
   if (defaultFileList !== null)

@@ -27,7 +27,6 @@ const RecipeCreate = () => {
           };
         });
         setAllCategories(categories);
-        console.log(categories);
       })
       .catch((error) => {
         console.log(error);
@@ -142,7 +141,6 @@ const RecipeCreate = () => {
               {
                 validator: (_, value) => {
                   if (!isNaN(value)) {
-                    console.log(value);
                     return Promise.resolve();
                   } else {
                     return Promise.reject(value);

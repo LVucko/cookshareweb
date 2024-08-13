@@ -161,7 +161,6 @@ const Register = () => {
               {
                 validator: (_, value) => {
                   if (!isNaN(value)) {
-                    console.log(value);
                     return Promise.resolve();
                   } else {
                     return Promise.reject(value);

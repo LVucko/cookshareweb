@@ -7,6 +7,8 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import axios from "axios";
 import Loading from "../components/Loading";
 import { isoDateToLocale } from "../utils/utilities";
+import { Button, Avatar, Collapse } from "antd";
+const { Panel } = Collapse;
 const UserDetails = () => {
   const { userInfo } = useContext(UserContext);
   const { id } = useParams();
@@ -51,77 +53,73 @@ const UserDetails = () => {
       });
   }
 
-  return (
-    <div className="user-details">
-      {!user && <Loading></Loading>}
-      {user && (
-        <div>
-          <div className="row">
-            <div className="tight-row">
-              <img
-                className="user-picture"
-                src={"/../../" + user.pathToPicture}
-                alt="Profile"
-              ></img>
-              <h2>{user.username}</h2>
+  if (user)
+    return (
+      <div className="user-details">
+        {!user && <Loading></Loading>}
+        {user && (
+          <div>
+            <div className="row">
+              <div className="tight-row">
+                <Avatar size={64} src={"/../../" + user.pathToPicture} />
+                <h2>{user.username}</h2>
+              </div>
+              <div className="tight-row">
+                <h2>Član od: {user.creationDate}</h2>
+                {userInfo &&
+                  (userInfo.role === "ADMIN" ||
+                    userInfo.userId === user.id) && (
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                        history.push("/customize/" + id);
+                      }}
+                    >
+                      Uredi profil
+                    </Button>
+                  )}
+              </div>
             </div>
-            <div className="tight-row">
-              <h2>Član od: {user.creationDate}</h2>
-              {userInfo &&
-                (userInfo.role === "MODERATOR" ||
-                  userInfo.role === "ADMIN" ||
-                  userInfo.userId === user.id) && (
-                  <button
-                    onClick={() => {
-                      history.push("/customize/" + id);
-                    }}
-                  >
-                    Uredi profil
-                  </button>
-                )}
+            <div className="last-row">
+              {user.realName.length > 0 && <h2>Ime: {user.realName}</h2>}
+              {user.phone.length > 0 && <h2>Telefon: {user.phone}</h2>}
+              {user.email.length > 0 && <h2>e-mail: {user.email}</h2>}
             </div>
+            <br></br>
+            <h3>
+              {user.about.length > 0
+                ? "O meni: " + user.about
+                : "Korisnik nije postavio informacije o sebi"}
+            </h3>
+            <br></br>
           </div>
-          <div className="last-row">
-            {user.realName.length > 0 && <h2>Ime: {user.realName}</h2>}
-            {user.phone.length > 0 && <h2>Telefon: {user.phone}</h2>}
-            {user.email.length > 0 && <h2>e-mail: {user.email}</h2>}
-          </div>
-          <br></br>
-          <h3 className="last-row">
-            {user.about.length > 0
-              ? "O meni: " + user.about
-              : "Korisnik nije postavio informacije o sebi"}
-          </h3>
-          <br></br>
-        </div>
-      )}
-      {!recipes && <Loading></Loading>}
-      {recipes && user && (
-        <>
-          <h2>Svi recepti korisnika {user.username}:</h2>
-          <div className="scrollable-box">
-            <RecipeList
-              recipes={recipes}
-              fetchRecipes={fetchAllRecipes}
-            ></RecipeList>
-          </div>
-        </>
-      )}
-      {!favouriteRecipes && <Loading></Loading>}
-      <br></br>
-      {favouriteRecipes && user && (
-        <>
-          <h2>Omiljeni recepti korisnika {user.username}:</h2>
-          <div className="scrollable-box">
-            <RecipeList
-              recipes={favouriteRecipes}
-              fetchRecipes={fetchFavouriteRecipes}
-            ></RecipeList>
-          </div>
-        </>
-      )}
-    </div>
-  );
+        )}
+        <Collapse bordered={false} defaultActiveKey={["1"]}>
+          <Panel
+            header={"Svi objavljeni recepti korisnika " + user.username}
+            key="1"
+          >
+            {!recipes && <Loading></Loading>}
+            {recipes && (
+              <RecipeList
+                recipes={recipes}
+                fetchRecipes={fetchAllRecipes}
+              ></RecipeList>
+            )}
+          </Panel>
+          <Panel header={"Omiljeni recepti korisnika " + user.username} key="2">
+            {!favouriteRecipes && <Loading></Loading>}
+            {favouriteRecipes && (
+              <RecipeList
+                recipes={favouriteRecipes}
+                fetchRecipes={fetchFavouriteRecipes}
+              ></RecipeList>
+            )}
+          </Panel>
+        </Collapse>
+      </div>
+    );
+  else return <Loading></Loading>;
 };
 
 export default UserDetails;

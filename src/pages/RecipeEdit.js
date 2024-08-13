@@ -24,7 +24,6 @@ const RecipeEdit = () => {
       .get("/api/recipes/" + id)
       .then((response) => {
         setRecipe(response.data);
-        console.log(response.data);
         axios
           .get("/api/categories")
           .then((response) => {
@@ -178,7 +177,6 @@ const RecipeEdit = () => {
               {
                 validator: (_, value) => {
                   if (!isNaN(value)) {
-                    console.log(value);
                     return Promise.resolve();
                   } else {
                     return Promise.reject(value);

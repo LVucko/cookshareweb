@@ -89,25 +89,33 @@ const RecipeDetails = () => {
             )}
           </div>
           <div className="row">
-            <h3>
+            <h3 style={{ color: "#f1356d" }}>
               Kategorije: {recipe.categories.toString().replaceAll(",", ", ")}
             </h3>
             {userInfo && userInfo.role === "GUEST" && (
               <h3>Prijavite se za ocjenjivanje</h3>
             )}
             {userInfo && userInfo.role !== "GUEST" && (
-              <h3 className="tight-row">
-                Vaša ocjena:{" "}
-                <RecipeRating
-                  id={id}
-                  fetchAverageRating={fetchAverageRating}
-                ></RecipeRating>
-              </h3>
+              <div className="tight-row">
+                <h3 style={{ color: "#f1356d" }}>Vaša ocjena: </h3>
+                <h3>
+                  <RecipeRating
+                    id={id}
+                    fetchAverageRating={fetchAverageRating}
+                  ></RecipeRating>
+                </h3>
+              </div>
             )}
           </div>
           <div className="row">
             <h4>
-              Autor: <a href={"/users/" + recipe.userId}>{recipe.username}</a>
+              Autor:{" "}
+              <a
+                style={{ color: "#f1356d", textDecoration: "underline" }}
+                href={"/users/" + recipe.userId}
+              >
+                {recipe.username}
+              </a>
             </h4>
             <div className="tight-row">
               <h4>Objavljen: {recipe.creationDate}</h4>
@@ -160,7 +168,7 @@ const RecipeDetails = () => {
           <div className="row">
             <div></div>
             <Image
-              width={500}
+              style={{ maxHeight: "500px" }}
               src={"/../../" + recipe.pathToPictures[0]}
               fallback={"/../../default.jpg"}
             />
