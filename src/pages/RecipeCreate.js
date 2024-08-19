@@ -122,7 +122,11 @@ const RecipeCreate = () => {
               {
                 validator: (_, value) => {
                   if (value !== undefined && value.length > 0) {
-                    return Promise.resolve();
+                    if (value.length > 4)
+                      return Promise.reject(
+                        "Možete odabrati najviše četiri kategorije"
+                      );
+                    else return Promise.resolve();
                   } else {
                     return Promise.reject("Odaberite barem jednu kategoriju");
                   }

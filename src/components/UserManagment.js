@@ -113,7 +113,7 @@ const UserManagment = () => {
               <TabPane tab="Podaci o korisniku" key="1">
                 <div className="row">
                   <div></div>
-                  <div>
+                  <div className="default-form">
                     <h2>{user.username}</h2>
                     <p>Napravljen: {user.creationDate}</p>
                     <p>Email: {user.email}</p>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { getJWT } from "../utils/utilities";
-import { Button } from "antd";
+import { Button, Tooltip } from "antd";
 
 const FavouriteButton = ({ id, numberOfFavourites, fetchRecipe }) => {
   const [isFavourite, setIsFavorite] = useState(false);
@@ -55,24 +55,28 @@ const FavouriteButton = ({ id, numberOfFavourites, fetchRecipe }) => {
   return (
     <>
       {isFavourite ? (
-        <Button
-          type="primary"
-          style={{ background: "#cc235b" }}
-          onClick={() => {
-            handleFavourite();
-          }}
-        >
-          {numberOfFavourites} ❤
-        </Button>
+        <Tooltip placement="right" title={"Ukloni iz omiljenih recepata"}>
+          <Button
+            type="primary"
+            style={{ background: "#cc235b" }}
+            onClick={() => {
+              handleFavourite();
+            }}
+          >
+            {numberOfFavourites} ❤
+          </Button>
+        </Tooltip>
       ) : (
-        <Button
-          type="primary"
-          onClick={() => {
-            handleFavourite();
-          }}
-        >
-          {numberOfFavourites} ❤
-        </Button>
+        <Tooltip placement="right" title={"Dodaj u omiljene recepte"}>
+          <Button
+            type="primary"
+            onClick={() => {
+              handleFavourite();
+            }}
+          >
+            {numberOfFavourites} ❤
+          </Button>
+        </Tooltip>
       )}
     </>
   );

@@ -58,7 +58,7 @@ const CategoryManagment = () => {
         <div className="tight-row">
           <label>Dodaj novu kategoriju:</label>
           <Input
-            style={{ width: "30%", marginLeft: "10px", marginRight: "10px" }}
+            style={{ width: "30%", marginLeft: "10px", marginRight: "5px" }}
             type="text"
             required
             value={newCategory}

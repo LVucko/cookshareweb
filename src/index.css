@@ -239,8 +239,6 @@
   padding: 6px 10px;
   margin: 10px 0;
 }
-/*Register*/
-
 
 /* user details */
 .user-details{
@@ -301,7 +299,6 @@
 
 /* StarRating */
 .star-container{
-
   position: relative;
 }
 .stars{
@@ -336,29 +333,6 @@
 .recipe-selector label{
   margin:2px;
   font-size: 20px;
-}
-
-
-#unfavourite{
-  background: #861b3b;
-  padding:5px;
-  margin: 1px;
-}
-#unfavourite:hover{
-  background: #f1356d;
-  padding:5px;
-  margin: 1px;
-}
-
-#favourite{
-  background: #f1356d;
-  padding:5px;
-  margin: 1px;
-}
-#favourite:hover{
-  background: #861b3b;
-  padding:5px;
-  margin: 1px;
 }
 
 div.ant-upload{

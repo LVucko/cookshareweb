@@ -95,10 +95,7 @@ const UserDetails = () => {
           </div>
         )}
         <Collapse bordered={false} defaultActiveKey={["1"]}>
-          <Panel
-            header={"Svi objavljeni recepti korisnika " + user.username}
-            key="1"
-          >
+          <Panel header={"Svi objavljeni recepti"} key="1">
             {!recipes && <Loading></Loading>}
             {recipes && (
               <RecipeList
@@ -107,7 +104,7 @@ const UserDetails = () => {
               ></RecipeList>
             )}
           </Panel>
-          <Panel header={"Omiljeni recepti korisnika " + user.username} key="2">
+          <Panel header={"Omiljeni recepti"} key="2">
             {!favouriteRecipes && <Loading></Loading>}
             {favouriteRecipes && (
               <RecipeList

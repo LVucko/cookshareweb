@@ -95,7 +95,7 @@ const ImageManagment = () => {
                   }
                 ) => (
                   <Space size={15} style={{ fontSize: "25px" }}>
-                    <DeleteOutlined onClick={() => onDelete(url)} />
+                    <DeleteOutlined onClick={() => onDelete()} />
                     <SwapOutlined rotate={90} onClick={onFlipY} />
                     <SwapOutlined onClick={onFlipX} />
                     <RotateLeftOutlined onClick={onRotateLeft} />
@@ -122,7 +122,9 @@ const ImageManagment = () => {
               }}
             >
               <Image
-                width={400}
+                width={500}
+                height={500}
+                style={{ objectFit: "contain" }}
                 src={"/../../" + pictures[currentPictureIndex]}
               />
             </Image.PreviewGroup>
